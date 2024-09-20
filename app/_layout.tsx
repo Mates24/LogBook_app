@@ -1,9 +1,19 @@
-import { Stack } from "expo-router";
+import { Stack, Tabs } from "expo-router";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 
 export default function RootLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-    </Stack>
+    <Tabs>
+      <Tabs.Screen name="index" />
+      <Tabs.Screen
+        name="login"
+        options={{
+          title: 'Login',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
