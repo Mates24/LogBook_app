@@ -111,8 +111,8 @@ const SignUp = ({ navigation }: Props) => {
             color={'#F62F2F'}
             onPress={handleSignup}
         />
-        <View style={{alignItems: 'center', position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', flexDirection: 'row', gap: 5, marginBottom: 10}}>
-          <Text>Už máte účet?</Text>
+        <View style={{alignItems: 'center', position: 'absolute', bottom: 0, flexDirection: 'row', gap: 5, marginBottom: 20}}>
+          <Text style={{textAlign: 'center'}}>Už máte účet?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={{color: '#084575', paddingBottom: 0,}}>Prihlásiť sa</Text>
           </TouchableOpacity>
