@@ -21,6 +21,7 @@ const Login = ({ navigation }: Props) => {
 
     try{
       const user = await pb.collection('users_logbook').authWithPassword(email, password);
+      navigation.navigate('Home');
     } catch (err: any){
       if (err.data.message === 'Failed to authenticate.') {
         Alert.alert('Nesprávne prihlasovacie údaje!');
