@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator();
 export default function RootLayout() {
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName='Login'>
+      <Stack.Navigator initialRouteName='Home'>
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
         <Stack.Screen name="Signup" component={SignUp} options={{headerShown: false}}/>
         <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>

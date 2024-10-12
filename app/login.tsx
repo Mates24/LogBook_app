@@ -13,7 +13,7 @@ const Login = ({ navigation }: Props) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const pb = new Pocketbase('http://127.0.0.1:8090');
+    const pb = new Pocketbase('http://192.168.0.153:8090');
 
     if (!email || !password) {
       Alert.alert("Prosím vyplňte všetky polia!");

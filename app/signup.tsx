@@ -13,7 +13,7 @@ const SignUp = ({ navigation }: Props) => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  const pb = new Pocketbase('http://127.0.0.1:8090');
+  const pb = new Pocketbase('http://192.168.0.153:8090');
 
   const handleSignup = async () => {
     if (!username || !email || !password || !passwordConfirm) {
@@ -39,7 +39,7 @@ const SignUp = ({ navigation }: Props) => {
       Alert.alert('Registrácia prebehla úspešne!');
       navigation.navigate('Login');
     } catch (err: any) {
-      if (err.data.data.email.message === 'The email is invalid or already in use.') {
+      if (err?.data?.data?.email?.message === 'The email is invalid or already in use.') {
         Alert.alert('Užívateľ s týmto e-mailom už existuje!');
       } else {
         Alert.alert('Nastala chyba pri registrácii! Skúste to znova neskôr.');
