@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./login";
@@ -8,12 +8,25 @@ import Home from "./home";
 const Stack = createNativeStackNavigator();
 
 export default function RootLayout() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  const handleSignIn = () => {
+    setIsSignedIn(true);
+  };
+
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName='Home'>
-        <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
-        <Stack.Screen name="Signup" component={SignUp} options={{headerShown: false}}/>
-        <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
+      <Stack.Navigator>
+        {isSignedIn ? (
+          <>
+            <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Login" options={{headerShown: false}}>{props => <Login {...props} onSignIn={handleSignIn} />}</Stack.Screen>
+            <Stack.Screen name="Signup" component={SignUp} options={{headerShown: false}}/>
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -5,23 +5,24 @@ import Pocketbase from 'pocketbase';
 
 interface Props{
   navigation: NavigationProp<any>;
+  onSignIn: () => void;
 }
 
-const Login = ({ navigation }: Props) => {
+const Login = ({ navigation, onSignIn }: Props) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const pb = new Pocketbase('http://192.168.0.153:8090');
+    const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
 
     if (!email || !password) {
       Alert.alert("Prosím vyplňte všetky polia!");
     }
 
     try{
-      const user = await pb.collection('users_logbook').authWithPassword(email, password);
-      navigation.navigate('Home');
+      const user = await pb.collection('users').authWithPassword(email, password);
+      onSignIn();
     } catch (err: any){
       if (err.data.message === 'Failed to authenticate.') {
         Alert.alert('Nesprávne prihlasovacie údaje!');
