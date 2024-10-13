@@ -13,7 +13,7 @@ const SignUp = ({ navigation }: Props) => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  const pb = new Pocketbase('http://192.168.0.153:8090');
+  const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
 
   const handleSignup = async () => {
     if (!username || !email || !password || !passwordConfirm) {
@@ -34,7 +34,7 @@ const SignUp = ({ navigation }: Props) => {
         "password": password,
         "passwordConfirm": passwordConfirm
       };
-      const newUser = await pb.collection('users_logbook').create(data);
+      const newUser = await pb.collection('users').create(data);
       
       Alert.alert('Registrácia prebehla úspešne!');
       navigation.navigate('Login');
