@@ -1,7 +1,7 @@
+import React, { useState } from "react";
 import { NavigationProp } from "@react-navigation/native";
 import { Button, SafeAreaView, TextInput, Text, View, TouchableOpacity, Alert } from "react-native";
 import Pocketbase from 'pocketbase';
-import { useState } from "react";
 
 interface Props{
   navigation: NavigationProp<any>;
