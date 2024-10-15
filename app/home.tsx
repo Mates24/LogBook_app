@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { NavigationProp } from '@react-navigation/native';
-import { SafeAreaView, ScrollView, View, TouchableOpacity, Image, Text, Dimensions } from 'react-native';
+import { SafeAreaView, ScrollView, View, TouchableOpacity, Image, Text, Dimensions, Button } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BarChart } from 'react-native-chart-kit';
 import Pocketbase from 'pocketbase';
@@ -55,7 +55,6 @@ const Home = () => {
                     }));
 
                     setCruises(formattedCruises);
-                    console.log(userData.record.id);
                 } else {
                     console.log('No cruises found for the user');
                 }
@@ -142,10 +141,13 @@ const Home = () => {
                 />
             </View>
             <View style={{marginTop: 20, paddingHorizontal: 10}}>
-                <View style={{marginBottom: 10}}>
-                    <Text style={{fontSize: 18, fontWeight: 600}}>Cruises</Text>
+                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5}}>
+                    <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase'}}>Cruises</Text>
+                    <TouchableOpacity>
+                        <Text style={{fontSize: 16, fontWeight: 600, textTransform: 'uppercase', color: '#808080'}}>Pridať plabu</Text>
+                    </TouchableOpacity>
                 </View>
-                <ScrollView>
+                <ScrollView style={{borderTopWidth: 0.2, borderColor: 'rgba(0,0,0,0.2)', paddingTop: 5}}>
                     {cruises.length > 0 ?
                         cruises.map(cruise => (
                             <TouchableOpacity style={{width: '100%', height: 125, borderWidth: 2, borderRadius: 16, padding: 10, marginBottom: 10}} key={cruise.id}>
