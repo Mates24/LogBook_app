@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, SafeAreaView, TextInput, Text, View, TouchableOpacity, Alert } from "react-native";
 import { NavigationProp } from '@react-navigation/native';
 import Pocketbase from 'pocketbase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props{
   navigation: NavigationProp<any>;
@@ -22,6 +23,14 @@ const Login = ({ navigation, onSignIn }: Props) => {
 
     try{
       const user = await pb.collection('users').authWithPassword(email, password);
+
+      const userInfo = {
+        ...user,
+        email,
+        password
+      };
+      await AsyncStorage.setItem('user', JSON.stringify(userInfo));
+      
       onSignIn();
     } catch (err: any){
       if (err.data.message === 'Failed to authenticate.') {
