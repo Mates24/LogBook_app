@@ -1,10 +1,14 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, lazy} from 'react';
 import { NavigationProp } from '@react-navigation/native';
-import { SafeAreaView, ScrollView, View, TouchableOpacity, Image, Text, Dimensions, Button } from 'react-native';
+import { SafeAreaView, ScrollView, View, TouchableOpacity, Image, Text, Dimensions } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BarChart } from 'react-native-chart-kit';
 import Pocketbase from 'pocketbase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface Props {
+    navigation: NavigationProp<any>;
+};
 
 interface Cruise {
     id: string;
@@ -13,9 +17,9 @@ interface Cruise {
     sails: number;
     engine: number;
     time: number;
-}
+};
 
-const Home = () => {    
+const Home = ({ navigation }: Props) => {    
     const [cruises, setCruises] = useState<Cruise[]>([]);
     const [userCruisesIds, setUserCruisesIds] = useState<string[]>([]);
 
@@ -67,7 +71,13 @@ const Home = () => {
     useEffect(() => {
         getCruise();
     }, []);
-    
+
+    const currentDayIndex = new Date().getDay();
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const getShiftedDays = () => {
+      return [...daysOfWeek.slice(currentDayIndex), ...daysOfWeek.slice(0, currentDayIndex)];
+    };
+
     const screenWidth = Dimensions.get('window').width;
     const chartConfig = {
         backgroundGradientFrom: "#FFF",
@@ -89,11 +99,11 @@ const Home = () => {
             fontWeight: '600',
         }
     };
-    const data = {
-        labels: ["Mon", "Tue", "Thu", "Fri", "Sun", "Sat"],
+    const chartData = {
+        labels: getShiftedDays(),
         datasets: [
           {
-            data: [20, 45, 28, 80, 120, 43]
+            data: [20, 45, 28, 80, 120, 43, 14]
           }
         ]
       };
@@ -128,7 +138,7 @@ const Home = () => {
                 <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase', marginBottom: 10}}>Sailed miles this week</Text>
                 <BarChart 
                    style={{ borderRadius: 16, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 1 }}
-                   data={data}
+                   data={chartData}
                    width={screenWidth - 20}
                    height={180}
                    yAxisLabel=''
@@ -143,7 +153,7 @@ const Home = () => {
             <View style={{marginTop: 20, paddingHorizontal: 10}}>
                 <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5}}>
                     <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase'}}>Cruises</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Cruise')}>
                         <Text style={{fontSize: 16, fontWeight: 600, textTransform: 'uppercase', color: '#808080'}}>Pridať plabu</Text>
                     </TouchableOpacity>
                 </View>
