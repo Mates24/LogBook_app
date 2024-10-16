@@ -5,6 +5,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BarChart } from 'react-native-chart-kit';
 import Pocketbase from 'pocketbase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
+import { API_KEY } from '@/constants/WeatherAPIKey';
 
 interface Props {
     navigation: NavigationProp<any>;
@@ -22,7 +24,47 @@ interface Cruise {
 const Home = ({ navigation }: Props) => {    
     const [cruises, setCruises] = useState<Cruise[]>([]);
     const [userCruisesIds, setUserCruisesIds] = useState<string[]>([]);
+    const [weatherData, setWeatherData] = useState<any>(null);
+    const [loadingWeather, setLoadingWeather] = useState(true);
+    const [locationError, setLocationError] = useState<string | null>(null);
 
+    
+    // Weather API
+    const fetchWeather = async (lat: number, lon: number) => {
+        try {
+            const response = await fetch(
+                `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
+            );
+            const json = await response.json();
+            if (json) {
+                setWeatherData(json);
+            } else {
+                console.warn('Failed to fetch weather data');
+            }
+            setLoadingWeather(false);
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+            setLoadingWeather(false);
+        }
+    };
+    const getWeatherIcon = (weather: string) => {
+        switch (weather) {
+            case 'Clear':
+                return 'weather-sunny';
+            case 'Clouds':
+                return 'weather-cloudy';
+            case 'Rain':
+                return 'weather-rainy';
+            case 'Thunderstorm':
+                return 'weather-lightning';
+            case 'Snow':
+                return 'weather-snowy';
+            default:
+                return 'weather-sunny';
+        }
+    };
+
+    // Cruises
     const getCruise = async () => {
         const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
         const user = await AsyncStorage.getItem('user');
@@ -69,15 +111,29 @@ const Home = ({ navigation }: Props) => {
     }
     
     useEffect(() => {
+        // Get location for weather data
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setLocationError('Permission to access location was denied');
+                setLoadingWeather(false);
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            fetchWeather(location.coords.latitude, location.coords.longitude);
+        })();
+
         getCruise();
     }, []);
 
+    // Chart
     const currentDayIndex = new Date().getDay();
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const getShiftedDays = () => {
       return [...daysOfWeek.slice(currentDayIndex), ...daysOfWeek.slice(0, currentDayIndex)];
     };
-
+    
     const screenWidth = Dimensions.get('window').width;
     const chartConfig = {
         backgroundGradientFrom: "#FFF",
@@ -106,26 +162,30 @@ const Home = ({ navigation }: Props) => {
             data: [20, 45, 28, 80, 120, 43, 14]
           }
         ]
-      };
+    };
 
     
     return (
         <SafeAreaView>
             <View style={{position: 'relative', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 10, marginBottom: 20}}>
                 <View style={{position: 'absolute', left: 10, width: '86%', height: 60, borderWidth: 2, borderColor: '#555', borderRightWidth: 0, borderRadius: 15, padding: 5, justifyContent: 'center'}}>
-                    <Text style={{fontSize: 16, fontWeight: 600}}>Liptovský Mikuláš</Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={{fontSize: 16, fontWeight: 600, marginEnd: 10}}>35°C</Text>
-                        <View style={{flexDirection: 'row', gap: 5}}>
-                            <MaterialCommunityIcons name="weather-cloudy" size={24} color="black" />
-                            <MaterialCommunityIcons name="weather-sunny" size={24} color="black" />
-                            <MaterialCommunityIcons name="weather-sunny" size={24} color="black" />
-                            <MaterialCommunityIcons name="weather-cloudy" size={24} color="black" />
-                            <MaterialCommunityIcons name="weather-rainy" size={24} color="black" />
-                            <MaterialCommunityIcons name="weather-rainy" size={24} color="black" />
-                            <MaterialCommunityIcons name="weather-cloudy" size={24} color="black" />
+                {loadingWeather ? (
+                        <Text>Loading weather...</Text>
+                    ) : locationError ? (
+                        <Text>{locationError}</Text>
+                    ) : weatherData && weatherData.weather && weatherData.main ? (
+                        <View>
+                            <Text style={{ fontSize: 16, fontWeight: '600' }}>{weatherData.name || 'Unknown location'}</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 16, fontWeight: '600', marginEnd: 10 }}>
+                                    {weatherData.main.temp !== undefined ? `${Math.round(weatherData.main.temp)}°C` : 'N/A'}
+                                </Text>
+                                <MaterialCommunityIcons name={getWeatherIcon(weatherData.weather[0]?.main || '')} size={24} color="black" />
+                            </View>
                         </View>
-                    </View>
+                    ) : (
+                        <Text>Weather data unavailable</Text>
+                    )}
                 </View>
                 <TouchableOpacity>
                     <Image 
