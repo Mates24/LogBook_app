@@ -33,7 +33,7 @@ const Home = ({ navigation }: Props) => {
     const fetchWeather = async (lat: number, lon: number) => {
         try {
             const response = await fetch(
-                `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
+                `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
             );
             const json = await response.json();
             if (json) {
@@ -47,18 +47,28 @@ const Home = ({ navigation }: Props) => {
             setLoadingWeather(false);
         }
     };
-    const getWeatherIcon = (weather: string) => {
+    const hour = new Date().getHours();
+    const isDay = hour >= 6 && hour < 18;
+    const getWeatherIcon = (weather: string, isDay: boolean) => {
         switch (weather) {
-            case 'Clear':
-                return 'weather-sunny';
-            case 'Clouds':
+            case 'clear sky':
+                return isDay ? 'weather-sunny' : 'weather-night';
+            case 'few clouds':
+                return 'weather-partly-cloudy';
+            case 'scattered clouds':
                 return 'weather-cloudy';
-            case 'Rain':
+            case 'broken clouds':
+                return 'weather-cloudy';
+            case 'shower rain':
                 return 'weather-rainy';
-            case 'Thunderstorm':
+            case 'rain':
+                return 'weather-pouring';
+            case 'thunderstorm':
                 return 'weather-lightning';
-            case 'Snow':
+            case 'snow':
                 return 'weather-snowy';
+            case 'mist':
+                return 'weather-fog';
             default:
                 return 'weather-sunny';
         }
@@ -169,18 +179,27 @@ const Home = ({ navigation }: Props) => {
         <SafeAreaView>
             <View style={{position: 'relative', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 10, marginBottom: 20}}>
                 <View style={{position: 'absolute', left: 10, width: '86%', height: 60, borderWidth: 2, borderColor: '#555', borderRightWidth: 0, borderRadius: 15, padding: 5, justifyContent: 'center'}}>
-                {loadingWeather ? (
-                        <Text>Loading weather...</Text>
+                    {loadingWeather ? (
+                        <Text style={{fontSize: 16, fontWeight: 600, color: '#808080'}}>Loading weather...</Text>
                     ) : locationError ? (
                         <Text>{locationError}</Text>
-                    ) : weatherData && weatherData.weather && weatherData.main ? (
+                    ) : weatherData && weatherData.list ? (
                         <View>
-                            <Text style={{ fontSize: 16, fontWeight: '600' }}>{weatherData.name || 'Unknown location'}</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '600' }}>{weatherData.city?.name || 'Unknown location'}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontSize: 16, fontWeight: '600', marginEnd: 10 }}>
-                                    {weatherData.main.temp !== undefined ? `${Math.round(weatherData.main.temp)}°C` : 'N/A'}
+                                    {weatherData.list[0].main.temp !== undefined ? `${Math.round(weatherData.list[0].main.temp)}°C` : 'N/A'}
                                 </Text>
-                                <MaterialCommunityIcons name={getWeatherIcon(weatherData.weather[0]?.main || '')} size={24} color="black" />
+                                <MaterialCommunityIcons name={getWeatherIcon(weatherData.list[0].weather[0]?.main || '', isDay)} size={24} color="black" style={{marginEnd: 5}}/>
+                                {weatherData.list.slice(0, 7).map((forecast: any, index: any) => (
+                                    <MaterialCommunityIcons
+                                        key={index}
+                                        name={getWeatherIcon(forecast.weather[0]?.main || '', isDay)}
+                                        size={24}
+                                        color="black"
+                                        style={{marginEnd: 5}}
+                                    />
+                                ))}
                             </View>
                         </View>
                     ) : (
