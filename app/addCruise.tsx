@@ -6,18 +6,26 @@ import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string, title: string, navigation: NavigationProp<any> }) => {
+    const [isFocus, setIsFocus] = useState(false); // Dropdown focus
     // Cruise inputs
     const [country, setCountry] = useState<any>(null); // Country input
-    const [isFocus, setIsFocus] = useState(false); // Country input dropdown focus
     const [region, setRegion] = useState<string>(''); // Region input
     const [cruiseDateFrom, setCruiseDateFrom] = useState<Date | null>(null); // Cruise from date input
     const [cruiseDateTo, setCruiseDateTo] = useState<Date | null>(null); // Cruise to date input
     const [mode, setMode] = useState<'date' | 'time'>('date'); // Cruise date input mode
     const [showDateFrom, setShowDateFrom] = useState(false); // Cruise from date input show
     const [showDateTo, setShowDateTo] = useState(false); // Cruise to date input show
+
+    // Boat inputs
+    const [boatName, setBoatName] = useState<string>(''); // Boat name input
+    const [boatType, setBoatType] = useState<any>(null); // Boat type input
+    const [registerNumber, setRegisterNumber] = useState<string>(''); // Boat register number input
+    const [boatOwner, setBoatOwner] = useState<string>(''); // Boat owner input
+    const [boatLength, setBoatLength] = useState<any>(null); // Boat length input
+    const [boatWidth, setBoatWidth] = useState<any>(null); // Boat width input
     
     // Data for country dropdown
-    const data = [
+    const cruiseData = [
         { label: 'Chorvátsko', value: 'Chorvátsko' },
         { label: 'Taliánsko', value: 'Taliánsko' },
         { label: 'Grécko', value: 'Grécko' },
@@ -69,6 +77,13 @@ const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string
     const hideDateToPicker = () => {
         setShowDateTo(false);
     }
+
+    // Data for boat type dropdown
+    const boatData = [
+        { label: 'Motorová loď', value: 'Motorová loď' },
+        { label: 'Plachetnica', value: 'Plachetnica' },
+        { label: 'Katamaran', value: 'Katamaran' },
+    ];
     
 
     return(
@@ -87,7 +102,7 @@ const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string
                       placeholderStyle={{color: '#808080'}}
                       selectedTextStyle={{color: '#000'}}
                       inputSearchStyle={{color: '#000'}}
-                      data={data}
+                      data={cruiseData}
                       search
                       maxHeight={300}
                       labelField="label"
@@ -156,14 +171,62 @@ const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string
                     )}
                 </View>
             </View>
-            <View style={{paddingHorizontal: 5}}>
+            <View style={{paddingHorizontal: 10}}>
                 <Text style={styles.labels}>Plavidlo</Text>
-                <TextInput />
-                <TextInput />
-                <TextInput />
-                <TextInput />
-                <TextInput />
-                <TextInput />
+                <View style={{flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10}}>
+                    <TextInput 
+                      placeholder='Názov lode' 
+                      placeholderTextColor={'#808080'} 
+                      value={boatName}
+                      onChangeText={setBoatName}
+                      style={styles.input}
+                    />
+                    <Dropdown
+                      style={styles.input}
+                      placeholderStyle={{color: '#808080'}}
+                      selectedTextStyle={{color: '#000'}}
+                      inputSearchStyle={{color: '#000'}}
+                      data={boatData}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Typ' : 'Typ'}
+                      searchPlaceholder="Hľadať"
+                      value={boatType}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={setBoatType}
+                    />
+                    <TextInput 
+                      placeholder='Registračné číslo' 
+                      placeholderTextColor={'#808080'} 
+                      value={registerNumber}
+                      onChangeText={setRegisterNumber}
+                      style={styles.input}
+                    />
+                    <TextInput 
+                      placeholder='Vlastník lode' 
+                      placeholderTextColor={'#808080'} 
+                      value={boatOwner}
+                      onChangeText={setBoatOwner}
+                      style={styles.input}
+                    />
+                    <TextInput 
+                      placeholder='Dĺžka lode' 
+                      placeholderTextColor={'#808080'} 
+                      value={boatLength}
+                      onChangeText={setBoatLength}
+                      style={styles.input}
+                    />
+                    <TextInput 
+                      placeholder='Dĺžka lode' 
+                      placeholderTextColor={'#808080'} 
+                      value={boatWidth}
+                      onChangeText={setBoatWidth}
+                      style={styles.input}
+                    />
+                </View>
             </View>
             <View style={{paddingHorizontal: 5}}>
                 <Text style={styles.labels}>Skipper</Text>
