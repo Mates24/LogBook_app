@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Image, Platform, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Image, Platform, StyleSheet, Switch } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string, title: string, navigation: NavigationProp<any> }) => {
     const [isFocus, setIsFocus] = useState(false); // Dropdown focus
@@ -23,6 +24,24 @@ const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string
     const [boatOwner, setBoatOwner] = useState<string>(''); // Boat owner input
     const [boatLength, setBoatLength] = useState<any>(null); // Boat length input
     const [boatWidth, setBoatWidth] = useState<any>(null); // Boat width input
+
+    // Skipper inputs
+    const [isEnabled, setIsEnabled] = useState(false); // Skipper switch input
+    const toggleSwitch = async () => {
+        setIsEnabled(previousState => !previousState);
+        const user = await AsyncStorage.getItem('user');
+        
+        if(user && !isEnabled) {
+            const userObj = JSON.parse(user);
+            setSkipperName(userObj.record.full_name);
+            setSkipperAddress(userObj.record.address);
+        } else {
+            setSkipperName('');
+            setSkipperAddress('');
+        };
+    };
+    const [skipperName, setSkipperName] = useState<string>(''); // Skipper name input
+    const [skipperAddress, setSkipperAddress] = useState<string>(''); // Skipper name input
     
     // Data for country dropdown
     const cruiseData = [
@@ -84,6 +103,19 @@ const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string
         { label: 'Plachetnica', value: 'Plachetnica' },
         { label: 'Katamaran', value: 'Katamaran' },
     ];
+
+    // Set user as skipper
+    const setUserAsSkipper = async () => {
+        const user = await AsyncStorage.getItem('user');
+        
+        if(user) {
+            const userObj = JSON.parse(user);
+            if(isEnabled) {
+                setSkipperName(userObj.full_name);
+                setSkipperAddress(userObj.address);
+            }
+        };
+    }
     
 
     return(
@@ -228,10 +260,32 @@ const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string
                     />
                 </View>
             </View>
-            <View style={{paddingHorizontal: 5}}>
-                <Text style={styles.labels}>Skipper</Text>
-                <TextInput />
-                <TextInput />
+            <View style={{paddingHorizontal: 10}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5}}>
+                    <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase'}}>Skipper</Text>
+                    <Switch 
+                      trackColor={{ false: '#767577', true: '#084575' }}
+                      thumbColor={isEnabled ? '#f4f3f4' : '#f4f3f4'}
+                      ios_backgroundColor={'#909090'}
+                      onValueChange={toggleSwitch}
+                      value={isEnabled}
+                      style={{transform: [{ scaleX: .55 }, { scaleY: .55 }], margin: 0}}
+                    />
+                </View>
+                <TextInput 
+                  placeholder='Meno a priezvisko' 
+                  placeholderTextColor={'#808080'} 
+                  value={skipperName}
+                  onChangeText={setSkipperName}
+                  style={styles.skipperInput}
+                />
+                <TextInput 
+                  placeholder='Bydlisko'
+                  placeholderTextColor={'#808080'}
+                  value={skipperAddress}
+                  onChangeText={setSkipperAddress}
+                  style={styles.skipperInput}
+                />
             </View>
             <View style={{paddingHorizontal: 5}}>
                 <Text style={styles.labels}>Posádka</Text>
@@ -266,6 +320,15 @@ const styles = StyleSheet.create({
 
     input: {
         width: '45%',
+        marginBottom: 15,
+        fontSize: 16,
+        color: '#000',
+        borderBottomWidth: 1,
+        borderColor: '#808080',
+    },
+
+    skipperInput: {
+        width: '100%',
         marginBottom: 15,
         fontSize: 16,
         color: '#000',
