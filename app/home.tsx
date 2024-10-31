@@ -120,9 +120,9 @@ const Home = ({ navigation }: Props) => {
                         id: record.id,
                         country: record.country,
                         date: record.from.split(' ')[0].split('-').reverse().join('.') + ' - ' + record.to.split(' ')[0].split('-').reverse().join('.'),
-                        sails: record.day_cruise.sails,
-                        engine: record.day_cruise.engine,
-                        time: record.day_cruise.time,
+                        sails: record.day_cruise.sails || 0,
+                        engine: record.day_cruise.engine || 0,
+                        time: record.day_cruise.time || 0,
                     }));
 
                     setCruises(formattedCruises);
