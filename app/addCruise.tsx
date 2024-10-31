@@ -134,7 +134,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
             </View>
             <View style={{paddingHorizontal: 10}}>
                 <Text style={styles.labels}>Plavba</Text>
-                <View style={{flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10}}>
+                <View style={styles.inputs}>
                     <Dropdown
                       style={styles.input}
                       placeholderStyle={{color: '#808080'}}
@@ -211,7 +211,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
             </View>
             <View style={{paddingHorizontal: 10}}>
                 <Text style={styles.labels}>Plavidlo</Text>
-                <View style={{flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10}}>
+                <View style={styles.inputs}>
                     <TextInput 
                       placeholder='Názov lode' 
                       placeholderTextColor={'#808080'} 
@@ -275,23 +275,25 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                       ios_backgroundColor={'#909090'}
                       onValueChange={toggleSwitch}
                       value={isEnabled}
-                      style={{transform: [{ scaleX: .55 }, { scaleY: .55 }], margin: 0}}
+                      style={{transform: [{ scaleX: .55 }, { scaleY: .55 }]}}
                     />
                 </View>
-                <TextInput 
-                  placeholder='Meno a priezvisko' 
-                  placeholderTextColor={'#808080'} 
-                  value={skipperName}
-                  onChangeText={setSkipperName}
-                  style={styles.skipperInput}
-                />
-                <TextInput 
-                  placeholder='Bydlisko'
-                  placeholderTextColor={'#808080'}
-                  value={skipperAddress}
-                  onChangeText={setSkipperAddress}
-                  style={styles.skipperInput}
-                />
+                <View style={styles.inputs}>
+                    <TextInput 
+                      placeholder='Meno a priezvisko' 
+                      placeholderTextColor={'#808080'} 
+                      value={skipperName}
+                      onChangeText={setSkipperName}
+                      style={styles.skipperInput}
+                    />
+                    <TextInput 
+                      placeholder='Bydlisko'
+                      placeholderTextColor={'#808080'}
+                      value={skipperAddress}
+                      onChangeText={setSkipperAddress}
+                      style={styles.skipperInput}
+                    />
+                </View>
             </View>
             <View style={{paddingHorizontal: 10}}>
                 <Text style={styles.labels}>Posádka</Text>
@@ -344,7 +346,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         textTransform: 'uppercase',
-        marginBottom: 5
+        marginBottom: 10
+    },
+
+    inputs:{
+        flexWrap: 'wrap', 
+        flexDirection: 'row', 
+        justifyContent: 'space-between',
     },
 
     input: {
