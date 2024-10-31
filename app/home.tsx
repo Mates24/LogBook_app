@@ -134,24 +134,6 @@ const Home = ({ navigation }: Props) => {
             }
         }
     }
-    
-    useEffect(() => {
-        // Get location for weather data
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setLocationError('Permission to access location was denied');
-                setLoadingWeather(false);
-                return;
-            }
-
-            let location = await Location.getCurrentPositionAsync({});
-            fetchWeather(location.coords.latitude, location.coords.longitude);
-        })();
-
-        getCruise();
-        getUserAvatar();
-    }, []);
 
     // Chart
     const currentDayIndex = new Date().getDay();
@@ -190,6 +172,23 @@ const Home = ({ navigation }: Props) => {
         ]
     };
 
+    useEffect(() => {
+        // Get location for weather data
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setLocationError('Permission to access location was denied');
+                setLoadingWeather(false);
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            fetchWeather(location.coords.latitude, location.coords.longitude);
+        })();
+
+        getCruise();
+        getUserAvatar();
+    }, []);
     
     return (
         <SafeAreaView>
