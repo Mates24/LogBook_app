@@ -27,8 +27,23 @@ const Home = ({ navigation }: Props) => {
     const [weatherData, setWeatherData] = useState<any>(null);
     const [loadingWeather, setLoadingWeather] = useState(true);
     const [locationError, setLocationError] = useState<string | null>(null);
+    const [url, setUrl] = useState<string>('');
 
-    
+
+    // Get users avatar
+    const getUserAvatar = async () => {
+        const user = await AsyncStorage.getItem('user');
+        if(user){
+            const userData = JSON.parse(user);
+            const userEmail = userData.email;
+            const userPassword = userData.password;
+            const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+            await pb.collection('users').authWithPassword(userEmail, userPassword);
+            const userAvatar = pb.files.getUrl(userData.record, userData.record.avatar, {'thumb': '100x250'});
+            setUrl(userAvatar);
+        }
+    }
+
     // Weather API
     const fetchWeather = async (lat: number, lon: number) => {
         try {
@@ -135,6 +150,7 @@ const Home = ({ navigation }: Props) => {
         })();
 
         getCruise();
+        getUserAvatar();
     }, []);
 
     // Chart
@@ -208,7 +224,7 @@ const Home = ({ navigation }: Props) => {
                 </View>
                 <TouchableOpacity>
                     <Image 
-                        source={require('../assets/images/avatar.png')}
+                        source={url ? { uri: url } : require('../assets/images/avatar.png')}
                         style={{width: 75, height: 75, borderRadius: 50}}
                     />
                 </TouchableOpacity>
