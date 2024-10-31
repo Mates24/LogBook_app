@@ -6,7 +6,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Cruise = ({ formik, name, title, navigation }: { formik: any, name: string, title: string, navigation: NavigationProp<any> }) => {
+const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const [isFocus, setIsFocus] = useState(false); // Dropdown focus
     // Cruise inputs
     const [country, setCountry] = useState<any>(null); // Country input
