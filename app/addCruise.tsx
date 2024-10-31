@@ -42,6 +42,12 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     };
     const [skipperName, setSkipperName] = useState<string>(''); // Skipper name input
     const [skipperAddress, setSkipperAddress] = useState<string>(''); // Skipper name input
+
+    // Crew inputs
+    const [crewMembers, setCrewMembers] = useState<string[]>(['', '']); // Crew name input
+    const addCrewMember = () => {
+        setCrewMembers([...crewMembers, '']);
+    };
     
     // Data for country dropdown
     const cruiseData = [
@@ -287,14 +293,37 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                   style={styles.skipperInput}
                 />
             </View>
-            <View style={{paddingHorizontal: 5}}>
+            <View style={{paddingHorizontal: 10}}>
                 <Text style={styles.labels}>Posádka</Text>
-                <TextInput />
-                <TextInput />
-                <TextInput />
-                <TouchableOpacity>
-                    <Text>Pridať člena</Text>
-                </TouchableOpacity>
+                <>
+                    {crewMembers.map((member, index) => (
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
+                            <TextInput
+                                placeholder='Meno a priezvisko; adresa'
+                                placeholderTextColor={'#808080'}
+                                value={member}
+                                onChangeText={(text) => {
+                                    const newCrewMembers = [...crewMembers];
+                                    newCrewMembers[index] = text;
+                                    setCrewMembers(newCrewMembers);
+                                }}
+                                style={[styles.crewInput, { flex: 1 }]}
+                            />
+                            <TouchableOpacity
+                                onPress={() => {
+                                    const newCrewMembers = crewMembers.filter((_, i) => i !== index);
+                                    setCrewMembers(newCrewMembers);
+                                }}
+                                style={{ marginLeft: 10 }}
+                            >
+                                <Ionicons name="trash" size={24} color="red" />
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+                    <TouchableOpacity onPress={addCrewMember} style={{alignItems: 'center'}}>
+                        <Text style={{fontSize: 16, fontWeight: 600, textTransform: 'uppercase', color: '#808080'}}>Pridať člena</Text>
+                    </TouchableOpacity>
+                </>
             </View>
             <View style={{paddingHorizontal: 5}}>
                 <TouchableOpacity>
@@ -333,6 +362,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#000',
         borderBottomWidth: 1,
+        borderColor: '#808080',
+    },
+
+    crewInput: {
+        width: '100%',
+        padding: 10,
+        fontSize: 16,
+        color: '#000',
+        borderWidth: 1,
+        borderRadius: 10,
         borderColor: '#808080',
     }
 });
