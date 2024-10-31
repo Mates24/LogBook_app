@@ -193,7 +193,7 @@ const Home = ({ navigation }: Props) => {
     return (
         <SafeAreaView>
             <View style={{position: 'relative', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 10, marginBottom: 20}}>
-                <View style={{position: 'absolute', left: 10, width: '81.5%', height: 60, borderWidth: 2, borderColor: '#555', borderRightWidth: 0, borderTopStartRadius: 15, borderBottomStartRadius: 15, padding: 5, justifyContent: 'center'}}>
+                <View style={{position: 'absolute', left: 10, width: '81.5%', height: 60, borderWidth: 2, borderColor: '#555', borderRightWidth: 0, borderTopStartRadius: 15, borderBottomStartRadius: 15, padding: 10, justifyContent: 'center'}}>
                     {loadingWeather ? (
                         <Text style={{fontSize: 16, fontWeight: 600, color: '#808080'}}>Loading weather...</Text>
                     ) : locationError ? (
