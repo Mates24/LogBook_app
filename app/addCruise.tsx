@@ -68,7 +68,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         { label: 'Slovensko', value: 'Slovensko' },
     ];
 
-    // Date From picker functions
+    // Date "From" picker functions
     const onChangeFrom = ({ type }: any, selectedDate: any) => {
         if(type === 'set') {
             const currentDate = selectedDate;
@@ -89,7 +89,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         setShowDateFrom(false);
     };
 
-    // Date To picker functions
+    // Date "To" picker functions
     const onChangeTo = ({ type }: any, selectedDate: any) => {
         if(type === 'set') {
             const currentDate = selectedDate;
