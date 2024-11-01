@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const [isFocus, setIsFocus] = useState(false); // Dropdown focus
+
     // Cruise inputs
     const [country, setCountry] = useState<any>(null); // Country input
     const [region, setRegion] = useState<string>(''); // Region input
@@ -69,7 +70,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
             // setShow(false);
         } else {
             setShowDateFrom(false);
-        }
+        };
     };
     const showModeFrom = (currentMode: any) => {
         setShowDateFrom(true);
@@ -80,7 +81,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     };
     const hideDateFromPicker = () => {
         setShowDateFrom(false);
-    }
+    };
 
     // Date To picker functions
     const onChangeTo = ({ type }: any, selectedDate: any) => {
@@ -90,7 +91,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
             // setShow(false);
         } else {
             setShowDateFrom(false);
-        }
+        };
     };
     const showModeTo = (currentMode: any) => {
         setShowDateTo(true);
@@ -101,7 +102,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     };
     const hideDateToPicker = () => {
         setShowDateTo(false);
-    }
+    };
 
     // Data for boat type dropdown
     const boatData = [
@@ -121,16 +122,24 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                 setSkipperAddress(userObj.address);
             }
         };
-    }
+    };
     
 
     return(
         <SafeAreaView>
-            <View style={{paddingHorizontal: 5, marginBottom: 5}}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 5, marginBottom: 5}}>
                 <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', gap: 2, marginBottom: 10}} onPress={() => navigation.navigate('Home')}>
                     <Ionicons name='arrow-back' size={18} color='#084575' />
-                    <Text style={{fontSize: 16, fontWeight: 600, color: '#084575'}}>Späť</Text>
+                    <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Späť</Text>
                 </TouchableOpacity>
+                <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5, gap: 10}}>
+                    <TouchableOpacity>
+                        <Text style={{fontSize: 16, fontWeight: 500, color: '#F62F2F'}}>Zrušiť</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Pridať</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             <View style={{paddingHorizontal: 10}}>
                 <Text style={styles.labels}>Plavba</Text>
@@ -326,14 +335,6 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                         <Text style={{fontSize: 16, fontWeight: 600, textTransform: 'uppercase', color: '#808080'}}>Pridať člena</Text>
                     </TouchableOpacity>
                 </>
-            </View>
-            <View style={{paddingHorizontal: 5}}>
-                <TouchableOpacity>
-                    <Text>Zrušiť</Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text>Pridať</Text>
-                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
