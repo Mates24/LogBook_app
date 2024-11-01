@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Image, Platform, StyleSheet, Switch } from 'react-native';
+import { Alert, SafeAreaView, View, Text, TextInput, TouchableOpacity, Platform, StyleSheet, Switch } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Pocketbase from 'pocketbase';
+
+interface CrewMembersObject {
+    [key: string]: any;
+}
 
 const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const [isFocus, setIsFocus] = useState(false); // Dropdown focus
@@ -32,6 +37,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         setIsEnabled(previousState => !previousState);
         const user = await AsyncStorage.getItem('user');
         
+        // Set user as skipper
         if(user && !isEnabled) {
             const userObj = JSON.parse(user);
             setSkipperName(userObj.record.full_name);
@@ -51,7 +57,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     };
     
     // Data for country dropdown
-    const cruiseData = [
+    const countryData = [
         { label: 'Chorvátsko', value: 'Chorvátsko' },
         { label: 'Taliánsko', value: 'Taliánsko' },
         { label: 'Grécko', value: 'Grécko' },
@@ -111,16 +117,49 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         { label: 'Katamaran', value: 'Katamaran' },
     ];
 
-    // Set user as skipper
-    const setUserAsSkipper = async () => {
+    // Add cruise
+    const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+
+    const transformedCrewMembers = crewMembers.reduce((acc: CrewMembersObject, member, index) => {
+        acc[`member_${index}`] = member;
+        return acc;
+    }, {} as CrewMembersObject);
+
+    const addCruise = async () => {
         const user = await AsyncStorage.getItem('user');
-        
-        if(user) {
-            const userObj = JSON.parse(user);
-            if(isEnabled) {
-                setSkipperName(userObj.full_name);
-                setSkipperAddress(userObj.address);
-            }
+        if(user){
+            const userData = JSON.parse(user);
+            const userEmail = userData.email;
+            const userPassword = userData.password;
+            await pb.collection('users').authWithPassword(userEmail, userPassword);
+
+            try{
+                const data = {
+                    'country': country.value,
+                    'area': region,
+                    'boat_info': {
+                        'name': boatName,
+                        'type': boatType.value,
+                        'register_number': registerNumber,
+                        'owner': boatOwner,
+                        'length': boatLength,
+                        'width': boatWidth
+                    },
+                    'skipper_info': {
+                        'name': skipperName,
+                        'address': skipperAddress
+                    },
+                    'crew': transformedCrewMembers,
+                    'from': cruiseDateFrom,
+                    'to': cruiseDateTo,
+                    'user': userData.record.id
+                };
+
+                await pb.collection('cruises').create(data);
+                navigation.navigate('Home');
+            } catch (err: any) {
+                Alert.alert('Nastala chyba pri pridávaní plavby! Skúste to znova neskôr.');
+            };
         };
     };
     
@@ -136,7 +175,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                     <TouchableOpacity>
                         <Text style={{fontSize: 16, fontWeight: 500, color: '#F62F2F'}}>Zrušiť</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={addCruise}>
                         <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Pridať</Text>
                     </TouchableOpacity>
                 </View>
@@ -149,7 +188,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                       placeholderStyle={{color: '#808080'}}
                       selectedTextStyle={{color: '#000'}}
                       inputSearchStyle={{color: '#000'}}
-                      data={cruiseData}
+                      data={countryData}
                       search
                       maxHeight={300}
                       labelField="label"
