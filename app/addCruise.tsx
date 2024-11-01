@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { Alert, SafeAreaView, View, Text, TextInput, TouchableOpacity, Platform, StyleSheet, Switch } from 'react-native';
+import { Alert, SafeAreaView, View, Text, TextInput, TouchableOpacity, Platform, StyleSheet, Switch, ScrollView } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -162,6 +162,26 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
             };
         };
     };
+
+    // Cancel adding cruise
+    const cancelCruise = () => {
+        setCountry(null);
+        setRegion('');
+        setCruiseDateFrom(null);
+        setCruiseDateTo(null);
+        setBoatName('');
+        setBoatType(null);
+        setRegisterNumber('');
+        setBoatOwner('');
+        setBoatLength('');
+        setBoatWidth('');
+        setIsEnabled(false);
+        setSkipperName('');
+        setSkipperAddress('');
+        setCrewMembers(['', '']);
+
+        navigation.navigate('Home');
+    };
     
 
     return(
@@ -172,7 +192,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                     <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Späť</Text>
                 </TouchableOpacity>
                 <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5, gap: 10}}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={cancelCruise}>
                         <Text style={{fontSize: 16, fontWeight: 500, color: '#F62F2F'}}>Zrušiť</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={addCruise}>
@@ -180,201 +200,203 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <View style={{paddingHorizontal: 10}}>
-                <Text style={styles.labels}>Plavba</Text>
-                <View style={styles.inputs}>
-                    <Dropdown
-                      style={styles.input}
-                      placeholderStyle={{color: '#808080'}}
-                      selectedTextStyle={{color: '#000'}}
-                      inputSearchStyle={{color: '#000'}}
-                      data={countryData}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Krajina' : 'Krajina'}
-                      searchPlaceholder="Hľadať"
-                      value={country}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={setCountry}
-                    />
-                    <TextInput 
-                      placeholder='Oblasť' 
-                      placeholderTextColor={'#808080'} 
-                      value={region}
-                      onChangeText={setRegion}
-                      style={styles.input}
-                    />
-                    <TouchableOpacity onPress={showDateFromPicker} style={{width: '45%'}}>
+            <ScrollView>
+                <View style={{paddingHorizontal: 10}}>
+                    <Text style={styles.labels}>Plavba</Text>
+                    <View style={styles.inputs}>
+                        <Dropdown
+                          style={styles.input}
+                          placeholderStyle={{color: '#808080'}}
+                          selectedTextStyle={{color: '#000'}}
+                          inputSearchStyle={{color: '#000'}}
+                          data={countryData}
+                          search
+                          maxHeight={300}
+                          labelField="label"
+                          valueField="value"
+                          placeholder={!isFocus ? 'Krajina' : 'Krajina'}
+                          searchPlaceholder="Hľadať"
+                          value={country}
+                          onFocus={() => setIsFocus(true)}
+                          onBlur={() => setIsFocus(false)}
+                          onChange={setCountry}
+                        />
                         <TextInput 
-                            placeholder='Dátum od' 
-                            placeholderTextColor={'#808080'} 
-                            value={cruiseDateFrom ? cruiseDateFrom.toISOString().split('T')[0].split('-').reverse().join('.') : ''}
-                            editable={false}
-                            style={{width: '100%', marginBottom: 15, fontSize: 16, color: '#000', borderBottomWidth: 1, borderColor: '#808080'}}
-                            onPressIn={showDateFromPicker}
+                          placeholder='Oblasť' 
+                          placeholderTextColor={'#808080'} 
+                          value={region}
+                          onChangeText={setRegion}
+                          style={styles.input}
                         />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={showDateToPicker} style={{width: '45%'}}>
-                        <TextInput 
-                            placeholder='Dátum do' 
-                            placeholderTextColor={'#808080'} 
-                            value={cruiseDateTo ? cruiseDateTo.toISOString().split('T')[0].split('-').reverse().join('.') : ''}
-                            editable={false}
-                            style={{width: '100%', marginBottom: 15, fontSize: 16, color: '#000', borderBottomWidth: 1, borderColor: '#808080'}}
-                            onPressIn={showDateToPicker}
-                        />
-                    </TouchableOpacity>
-                    {showDateFrom && (
-                    <View style={{alignItems: 'center', width: '100%', marginBottom: 10}}>
-                        <DateTimePicker
-                          value={cruiseDateFrom || new Date()}
-                          mode={mode}
-                          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                          onChange={onChangeFrom}
-                          textColor='#000'
-                        />
-                        <TouchableOpacity onPress={hideDateFromPicker} style={{backgroundColor: '#808080'}}>
-                            <Text style={{fontWeight: 600, textTransform: 'uppercase'}}>Potvrdiť</Text>
-                        </TouchableOpacity>
-                    </View>
-                    )}
-                    {showDateTo && (
-                    <View style={{alignItems: 'center', width: '100%', marginBottom: 10}}>
-                        <DateTimePicker
-                          value={cruiseDateTo || new Date()}
-                          mode={mode}
-                          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                          onChange={onChangeTo}
-                          textColor='#000'
-                        />
-                        <TouchableOpacity onPress={hideDateToPicker} style={{backgroundColor: '#808080'}}>
-                            <Text style={{fontWeight: 600, textTransform: 'uppercase'}}>Potvrdiť</Text>
-                        </TouchableOpacity>
-                    </View>
-                    )}
-                </View>
-            </View>
-            <View style={{paddingHorizontal: 10}}>
-                <Text style={styles.labels}>Plavidlo</Text>
-                <View style={styles.inputs}>
-                    <TextInput 
-                      placeholder='Názov lode' 
-                      placeholderTextColor={'#808080'} 
-                      value={boatName}
-                      onChangeText={setBoatName}
-                      style={styles.input}
-                    />
-                    <Dropdown
-                      style={styles.input}
-                      placeholderStyle={{color: '#808080'}}
-                      selectedTextStyle={{color: '#000'}}
-                      inputSearchStyle={{color: '#000'}}
-                      data={boatData}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Typ' : 'Typ'}
-                      searchPlaceholder="Hľadať"
-                      value={boatType}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={setBoatType}
-                    />
-                    <TextInput 
-                      placeholder='Registračné číslo' 
-                      placeholderTextColor={'#808080'} 
-                      value={registerNumber}
-                      onChangeText={setRegisterNumber}
-                      style={styles.input}
-                    />
-                    <TextInput 
-                      placeholder='Vlastník lode' 
-                      placeholderTextColor={'#808080'} 
-                      value={boatOwner}
-                      onChangeText={setBoatOwner}
-                      style={styles.input}
-                    />
-                    <TextInput 
-                      placeholder='Dĺžka lode' 
-                      placeholderTextColor={'#808080'} 
-                      value={boatLength}
-                      onChangeText={setBoatLength}
-                      style={styles.input}
-                    />
-                    <TextInput 
-                      placeholder='Dĺžka lode' 
-                      placeholderTextColor={'#808080'} 
-                      value={boatWidth}
-                      onChangeText={setBoatWidth}
-                      style={styles.input}
-                    />
-                </View>
-            </View>
-            <View style={{paddingHorizontal: 10}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5}}>
-                    <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase'}}>Skipper</Text>
-                    <Switch 
-                      trackColor={{ false: '#767577', true: '#084575' }}
-                      thumbColor={isEnabled ? '#f4f3f4' : '#f4f3f4'}
-                      ios_backgroundColor={'#909090'}
-                      onValueChange={toggleSwitch}
-                      value={isEnabled}
-                      style={{transform: [{ scaleX: .55 }, { scaleY: .55 }]}}
-                    />
-                </View>
-                <View style={styles.inputs}>
-                    <TextInput 
-                      placeholder='Meno a priezvisko' 
-                      placeholderTextColor={'#808080'} 
-                      value={skipperName}
-                      onChangeText={setSkipperName}
-                      style={styles.skipperInput}
-                    />
-                    <TextInput 
-                      placeholder='Bydlisko'
-                      placeholderTextColor={'#808080'}
-                      value={skipperAddress}
-                      onChangeText={setSkipperAddress}
-                      style={styles.skipperInput}
-                    />
-                </View>
-            </View>
-            <View style={{paddingHorizontal: 10}}>
-                <Text style={styles.labels}>Posádka</Text>
-                <>
-                    {crewMembers.map((member, index) => (
-                        <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
-                            <TextInput
-                                placeholder='Meno a priezvisko; adresa'
-                                placeholderTextColor={'#808080'}
-                                value={member}
-                                onChangeText={(text) => {
-                                    const newCrewMembers = [...crewMembers];
-                                    newCrewMembers[index] = text;
-                                    setCrewMembers(newCrewMembers);
-                                }}
-                                style={[styles.crewInput, { flex: 1 }]}
+                        <TouchableOpacity onPress={showDateFromPicker} style={{width: '45%'}}>
+                            <TextInput 
+                                placeholder='Dátum od' 
+                                placeholderTextColor={'#808080'} 
+                                value={cruiseDateFrom ? cruiseDateFrom.toISOString().split('T')[0].split('-').reverse().join('.') : ''}
+                                editable={false}
+                                style={{width: '100%', marginBottom: 15, fontSize: 16, color: '#000', borderBottomWidth: 1, borderColor: '#808080'}}
+                                onPressIn={showDateFromPicker}
                             />
-                            <TouchableOpacity
-                                onPress={() => {
-                                    const newCrewMembers = crewMembers.filter((_, i) => i !== index);
-                                    setCrewMembers(newCrewMembers);
-                                }}
-                                style={{ marginLeft: 10 }}
-                            >
-                                <Ionicons name="trash" size={24} color="red" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={showDateToPicker} style={{width: '45%'}}>
+                            <TextInput 
+                                placeholder='Dátum do' 
+                                placeholderTextColor={'#808080'} 
+                                value={cruiseDateTo ? cruiseDateTo.toISOString().split('T')[0].split('-').reverse().join('.') : ''}
+                                editable={false}
+                                style={{width: '100%', marginBottom: 15, fontSize: 16, color: '#000', borderBottomWidth: 1, borderColor: '#808080'}}
+                                onPressIn={showDateToPicker}
+                            />
+                        </TouchableOpacity>
+                        {showDateFrom && (
+                        <View style={{alignItems: 'center', width: '100%', marginBottom: 10}}>
+                            <DateTimePicker
+                              value={cruiseDateFrom || new Date()}
+                              mode={mode}
+                              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                              onChange={onChangeFrom}
+                              textColor='#000'
+                            />
+                            <TouchableOpacity onPress={hideDateFromPicker} style={{backgroundColor: '#808080'}}>
+                                <Text style={{fontWeight: 600, textTransform: 'uppercase'}}>Potvrdiť</Text>
                             </TouchableOpacity>
                         </View>
-                    ))}
-                    <TouchableOpacity onPress={addCrewMember} style={{alignItems: 'center'}}>
-                        <Text style={{fontSize: 16, fontWeight: 600, textTransform: 'uppercase', color: '#808080'}}>Pridať člena</Text>
-                    </TouchableOpacity>
-                </>
-            </View>
+                        )}
+                        {showDateTo && (
+                        <View style={{alignItems: 'center', width: '100%', marginBottom: 10}}>
+                            <DateTimePicker
+                              value={cruiseDateTo || new Date()}
+                              mode={mode}
+                              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                              onChange={onChangeTo}
+                              textColor='#000'
+                            />
+                            <TouchableOpacity onPress={hideDateToPicker} style={{backgroundColor: '#808080'}}>
+                                <Text style={{fontWeight: 600, textTransform: 'uppercase'}}>Potvrdiť</Text>
+                            </TouchableOpacity>
+                        </View>
+                        )}
+                    </View>
+                </View>
+                <View style={{paddingHorizontal: 10}}>
+                    <Text style={styles.labels}>Plavidlo</Text>
+                    <View style={styles.inputs}>
+                        <TextInput 
+                          placeholder='Názov lode' 
+                          placeholderTextColor={'#808080'} 
+                          value={boatName}
+                          onChangeText={setBoatName}
+                          style={styles.input}
+                        />
+                        <Dropdown
+                          style={styles.input}
+                          placeholderStyle={{color: '#808080'}}
+                          selectedTextStyle={{color: '#000'}}
+                          inputSearchStyle={{color: '#000'}}
+                          data={boatData}
+                          search
+                          maxHeight={300}
+                          labelField="label"
+                          valueField="value"
+                          placeholder={!isFocus ? 'Typ' : 'Typ'}
+                          searchPlaceholder="Hľadať"
+                          value={boatType}
+                          onFocus={() => setIsFocus(true)}
+                          onBlur={() => setIsFocus(false)}
+                          onChange={setBoatType}
+                        />
+                        <TextInput 
+                          placeholder='Registračné číslo' 
+                          placeholderTextColor={'#808080'} 
+                          value={registerNumber}
+                          onChangeText={setRegisterNumber}
+                          style={styles.input}
+                        />
+                        <TextInput 
+                          placeholder='Vlastník lode' 
+                          placeholderTextColor={'#808080'} 
+                          value={boatOwner}
+                          onChangeText={setBoatOwner}
+                          style={styles.input}
+                        />
+                        <TextInput 
+                          placeholder='Dĺžka lode' 
+                          placeholderTextColor={'#808080'} 
+                          value={boatLength}
+                          onChangeText={setBoatLength}
+                          style={styles.input}
+                        />
+                        <TextInput 
+                          placeholder='Dĺžka lode' 
+                          placeholderTextColor={'#808080'} 
+                          value={boatWidth}
+                          onChangeText={setBoatWidth}
+                          style={styles.input}
+                        />
+                    </View>
+                </View>
+                <View style={{paddingHorizontal: 10}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5}}>
+                        <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase'}}>Skipper</Text>
+                        <Switch 
+                          trackColor={{ false: '#767577', true: '#084575' }}
+                          thumbColor={isEnabled ? '#f4f3f4' : '#f4f3f4'}
+                          ios_backgroundColor={'#909090'}
+                          onValueChange={toggleSwitch}
+                          value={isEnabled}
+                          style={{transform: [{ scaleX: .55 }, { scaleY: .55 }]}}
+                        />
+                    </View>
+                    <View style={styles.inputs}>
+                        <TextInput 
+                          placeholder='Meno a priezvisko' 
+                          placeholderTextColor={'#808080'} 
+                          value={skipperName}
+                          onChangeText={setSkipperName}
+                          style={styles.skipperInput}
+                        />
+                        <TextInput 
+                          placeholder='Bydlisko'
+                          placeholderTextColor={'#808080'}
+                          value={skipperAddress}
+                          onChangeText={setSkipperAddress}
+                          style={styles.skipperInput}
+                        />
+                    </View>
+                </View>
+                <View style={{paddingHorizontal: 10}}>
+                    <Text style={styles.labels}>Posádka</Text>
+                    <>
+                        {crewMembers.map((member, index) => (
+                            <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
+                                <TextInput
+                                    placeholder='Meno a priezvisko; adresa'
+                                    placeholderTextColor={'#808080'}
+                                    value={member}
+                                    onChangeText={(text) => {
+                                        const newCrewMembers = [...crewMembers];
+                                        newCrewMembers[index] = text;
+                                        setCrewMembers(newCrewMembers);
+                                    }}
+                                    style={[styles.crewInput, { flex: 1 }]}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        const newCrewMembers = crewMembers.filter((_, i) => i !== index);
+                                        setCrewMembers(newCrewMembers);
+                                    }}
+                                    style={{ marginLeft: 10 }}
+                                >
+                                    <Ionicons name="trash" size={24} color="red" />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                        <TouchableOpacity onPress={addCrewMember} style={{alignItems: 'center'}}>
+                            <Text style={{fontSize: 16, fontWeight: 600, textTransform: 'uppercase', color: '#808080'}}>Pridať člena</Text>
+                        </TouchableOpacity>
+                    </>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
