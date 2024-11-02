@@ -48,7 +48,7 @@ const Home = ({ navigation }: Props) => {
     const fetchWeather = async (lat: number, lon: number) => {
         try {
             const response = await fetch(
-                `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
+                `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&exclude=hourly&appid=${API_KEY}&units=metric`
             );
             const json = await response.json();
             if (json) {
@@ -85,7 +85,7 @@ const Home = ({ navigation }: Props) => {
             case 'mist':
                 return 'weather-fog';
             default:
-                return 'weather-sunny';
+                return isDay ? 'weather-sunny' : 'weather-night';
         }
     };
 
@@ -221,7 +221,7 @@ const Home = ({ navigation }: Props) => {
                                             {weatherData.list[0].main.temp !== undefined ? `${Math.round(weatherData.list[0].main.temp)}°C` : 'N/A'}
                                         </Text>
                                         <MaterialCommunityIcons name={getWeatherIcon(weatherData.list[0].weather[0]?.main || '', isDay)} size={24} color="black" style={{marginEnd: 5}}/>
-                                        {weatherData.list.slice(0, 7).map((forecast: any, index: any) => (
+                                        {weatherData.list.slice(0, 6).map((forecast: any, index: any) => (
                                             <MaterialCommunityIcons
                                                 key={index}
                                                 name={getWeatherIcon(forecast.weather[0]?.main || '', isDay)}
