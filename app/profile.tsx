@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { SafeAreaView, TouchableOpacity, View, Text, Image, TextInput, ActivityIndicator, Alert } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView, TouchableOpacity, View, Text, Image, TextInput, ActivityIndicator, Alert, StyleSheet } from "react-native";
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Pocketbase from 'pocketbase';
@@ -13,7 +13,10 @@ interface Props {
 const Profile = ({ navigation, onSignOut }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [userName, setUserName] = useState<string>('');
+    const [firstName, setFirstName] = useState<string>('');
     const [userLastName, setUserLastName] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [location, setLocation] = useState<string>('');
     const [url, setUrl] = useState<string>('');
     const [editable, setEditable] = useState<boolean>(false);
     const textInputRef = useRef<TextInput>(null);
@@ -32,8 +35,8 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         }
     }
 
-    // Fetch user name
-    const fetchUserName = async () => {
+    // Fetch user data
+    const fetchData = async () => {
         setLoading(true);
         const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
         const user = await AsyncStorage.getItem('user');
@@ -41,8 +44,11 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         if (user) {
             await pb.collection('users').authWithPassword(JSON.parse(user).email, JSON.parse(user).password);
             const userPb = await pb.collection('users').getOne(JSON.parse(user).record.id);
-            setUserName(userPb.full_name.split(' ')[0]);
+            setUserName(userPb.username);
+            setFirstName(userPb.full_name.split(' ')[0]);
             setUserLastName(userPb.full_name.split(' ')[1]);
+            setEmail(userPb.email);
+            setLocation(userPb.address);
             setLoading(false);
         }
     };
@@ -61,7 +67,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         setEditable(false); // Disable editing
 
         const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
-        const userFullName = `${userName} ${userLastName}`;
+        const userFullName = `${firstName} ${userLastName}`;
         
         const user = await AsyncStorage.getItem('user');
         
@@ -76,12 +82,26 @@ const Profile = ({ navigation, onSignOut }: Props) => {
 
                 // Update user full name in database
                 await pb.collection('users').update(parsedUser.record.id, {
+                    'username': userName,
                     'full_name': userFullName,
+                    'address': location,
                 });
+                await pb.collection('users').requestEmailChange(email);
 
                 Alert.alert('Zmeny boli úspešne uložené');
             } catch (error){
                 Alert.alert('Nepodarilo sa uložiť zmeny');
+
+                const originalUser = await AsyncStorage.getItem('user');
+                if (originalUser) {
+                    const parsedOriginalUser = JSON.parse(originalUser);
+                    // Reset fields with original data
+                    setFirstName(parsedOriginalUser.record.full_name.split(' ')[0]);
+                    setUserLastName(parsedOriginalUser.record.full_name.split(' ')[1]);
+                    setUserName(parsedOriginalUser.record.username);
+                    setLocation(parsedOriginalUser.record.address);
+                    setEmail(parsedOriginalUser.email);
+                }
             }
         }
     };
@@ -95,7 +115,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
 
     useEffect(() => {
         getUserAvatar();
-        fetchUserName();
+        fetchData();
     }, []);
 
     return (
@@ -126,7 +146,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                             )}
                         </View>
                     </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 25, paddingBottom: 30, borderRadius: 20, shadowColor: '#808080', shadowOffset: {width: 0, height: 5}, shadowOpacity: .5, shadowRadius: 3, backgroundColor: '#F0F0F0'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 25, paddingBottom: 30, marginBottom: 10, borderRadius: 20, shadowColor: '#808080', shadowOffset: {width: 0, height: 5}, shadowOpacity: .5, shadowRadius: 3, backgroundColor: '#F0F0F0'}}>
                         <TouchableOpacity>
                             <Image 
                                 source={url ? { uri: url } : require('../assets/images/avatar.png')}
@@ -136,8 +156,8 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                         <View>
                             <TextInput
                               ref={textInputRef}
-                              value={userName}
-                              onChangeText={setUserName}
+                              value={firstName}
+                              onChangeText={setFirstName}
                               editable={editable}
                               style={{fontSize: 28, fontWeight: '700', marginBottom: -3}}
                             />
@@ -149,7 +169,79 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                             />
                         </View>
                     </View>
-                    <View></View>
+                    <View>
+                        <View style={styles.input}>
+                            <Ionicons 
+                              name='person-outline'
+                              size={45}
+                              color='black'
+                              style={{marginRight: 15}}
+                            />
+                            <View>
+                                <Text style={{fontSize: 16, fontWeight: 500, textTransform: 'uppercase'}}>Username</Text>
+                                <TextInput 
+                                  value={`@${userName}`}
+                                  onChangeText={setUserName}
+                                  editable={editable}
+                                  style={{fontSize: 16, color: '#808080'}}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.input}>
+                            <Ionicons 
+                              name='mail-outline'
+                              size={45}
+                              color='black'
+                              style={{marginRight: 15}}
+                            />
+                            <View>
+                                <Text style={{fontSize: 16, fontWeight: 500, textTransform: 'uppercase'}}>Email</Text>
+                                <TextInput 
+                                  value={email}
+                                  onChangeText={setEmail}
+                                  editable={editable}
+                                  style={{fontSize: 16, color: '#808080'}}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.input}>
+                            <Ionicons 
+                              name='location-outline'
+                              size={45}
+                              color='black'
+                              style={{marginRight: 15}}
+                            />
+                            <View>
+                                <Text style={{fontSize: 16, fontWeight: 500, textTransform: 'uppercase'}}>Adresa</Text>
+                                <TextInput 
+                                  placeholder='Vaša adresa'
+                                  value={location}
+                                  onChangeText={setLocation}
+                                  editable={editable}
+                                  placeholderTextColor={'#808080'}
+                                  style={{fontSize: 16, color: '#808080'}}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.input}>
+                            <TouchableOpacity style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Ionicons 
+                                      name='image-outline'
+                                      size={45}
+                                      color='black'
+                                      style={{marginRight: 15}}
+                                    />
+                                    <Text style={{fontSize: 16, fontWeight: 500, textTransform: 'uppercase'}}>Kapitánsky preukaz</Text>
+                                </View>
+                                <Ionicons 
+                                  name='chevron-forward-outline'
+                                  size={30}
+                                  color='#808080'
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
             )}
         </SafeAreaView>
@@ -157,3 +249,15 @@ const Profile = ({ navigation, onSignOut }: Props) => {
 };
 
 export default Profile;
+
+const styles = StyleSheet.create({
+    input: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#808080',
+        borderRadius: 10,
+    }
+});
