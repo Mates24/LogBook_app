@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./login";
@@ -21,6 +22,7 @@ export default function RootLayout() {
 
   return (
     <NavigationContainer independent={true}>
+      <StatusBar barStyle="dark-content" />
       <Stack.Navigator>
         {isSignedIn ? (
           <>
