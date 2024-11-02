@@ -5,6 +5,7 @@ import Login from "./login";
 import SignUp from "./signup";
 import Home from "./home";
 import Cruise from "./addCruise";
+import Profile from "./profile";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,8 @@ export default function RootLayout() {
           <>
             <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
             <Stack.Screen name="Cruise" component={Cruise} options={{headerShown: false}}/>
+            <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}}/>
+
           </>
         ) : (
           <>
