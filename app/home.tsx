@@ -24,7 +24,6 @@ interface Cruise {
 const Home = ({ navigation }: Props) => {
     const [loading, setLoading] = useState(true);
     const [cruises, setCruises] = useState<Cruise[]>([]);
-    const [userCruisesIds, setUserCruisesIds] = useState<string[]>([]);
     const [weatherData, setWeatherData] = useState<any>(null);
     const [loadingWeather, setLoadingWeather] = useState(true);
     const [locationError, setLocationError] = useState<string | null>(null);
@@ -109,11 +108,8 @@ const Home = ({ navigation }: Props) => {
 
                 const record = await pb.collection('users').getOne(userData.record.id);
 
-                const cruisesIds = record.cruises;
                 
-                if (cruisesIds && cruisesIds.length > 0) {
-                    setUserCruisesIds(cruisesIds);
-
+                if (record) {
                     const records = await pb.collection('cruises').getFullList(10000, {
                         filter: `user = '${userData.record.id}'`,
                         expand: 'country,day_cruise,image,from,to',
