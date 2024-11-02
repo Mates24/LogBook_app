@@ -15,6 +15,9 @@ export default function RootLayout() {
   const handleSignIn = () => {
     setIsSignedIn(true);
   };
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+  };
 
   return (
     <NavigationContainer independent={true}>
@@ -23,7 +26,7 @@ export default function RootLayout() {
           <>
             <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
             <Stack.Screen name="Cruise" component={Cruise} options={{headerShown: false}}/>
-            <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}}/>
+            <Stack.Screen name="Profile"options={{headerShown: false}}>{props => <Profile {...props} onSignOut={handleSignOut} />}</Stack.Screen>
 
           </>
         ) : (
