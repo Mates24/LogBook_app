@@ -240,7 +240,7 @@ const Home = ({ navigation }: Props) => {
                                 <Text>Weather data unavailable</Text>
                             )}
                         </View>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                             <Image 
                                 source={url ? { uri: url } : require('../assets/images/avatar.png')}
                                 style={{width: 75, height: 75, borderRadius: 50}}
