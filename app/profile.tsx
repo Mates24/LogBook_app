@@ -130,7 +130,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                         <TouchableOpacity>
                             <Image 
                                 source={url ? { uri: url } : require('../assets/images/avatar.png')}
-                                style={{width: 75, height: 75, borderRadius: 50, marginRight: 15}}
+                                style={{width: 90, height: 90, borderRadius: 50, marginRight: 15}}
                             />
                         </TouchableOpacity>
                         <View>
