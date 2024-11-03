@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { SafeAreaView, TouchableOpacity, View, Text, Image, TextInput, ActivityIndicator, Alert, StyleSheet } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Pocketbase from 'pocketbase';
