@@ -92,10 +92,10 @@ const Profile = ({ navigation, onSignOut }: Props) => {
             } catch (error){
                 Alert.alert('Nepodarilo sa uložiť zmeny');
 
+                // Fetch original user data
                 const originalUser = await AsyncStorage.getItem('user');
                 if (originalUser) {
                     const parsedOriginalUser = JSON.parse(originalUser);
-                    // Reset fields with original data
                     setFirstName(parsedOriginalUser.record.full_name.split(' ')[0]);
                     setUserLastName(parsedOriginalUser.record.full_name.split(' ')[1]);
                     setUserName(parsedOriginalUser.record.username);
@@ -224,7 +224,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                             </View>
                         </View>
                         <View style={styles.input}>
-                            <TouchableOpacity style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <TouchableOpacity style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}} onPress={() => navigation.navigate('Licenses')}>
                                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                     <Ionicons 
                                       name='image-outline'
