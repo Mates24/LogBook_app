@@ -86,7 +86,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                     'full_name': userFullName,
                     'address': location,
                 });
-                await pb.collection('users').requestEmailChange(email);
+                // await pb.collection('users').requestEmailChange(email);
 
                 Alert.alert('Zmeny boli úspešne uložené');
             } catch (error){
@@ -179,12 +179,15 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                             />
                             <View>
                                 <Text style={{fontSize: 16, fontWeight: 500, textTransform: 'uppercase'}}>Username</Text>
-                                <TextInput 
-                                  value={`@${userName}`}
-                                  onChangeText={setUserName}
-                                  editable={editable}
-                                  style={{fontSize: 16, color: '#808080'}}
-                                />
+                                <View style={{flexDirection: 'row'}}>
+                                    <Text style={{fontSize: 16, color: '#808080'}}>@</Text>
+                                    <TextInput 
+                                      value={userName}
+                                      onChangeText={setUserName}
+                                      editable={editable}
+                                      style={{fontSize: 16, color: '#808080'}}
+                                    />
+                                </View>
                             </View>
                         </View>
                         <View style={styles.input}>
@@ -199,7 +202,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                                 <TextInput 
                                   value={email}
                                   onChangeText={setEmail}
-                                  editable={editable}
+                                  editable={false}
                                   style={{fontSize: 16, color: '#808080'}}
                                 />
                             </View>
