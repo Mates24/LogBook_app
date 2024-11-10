@@ -152,17 +152,22 @@ const License = ({ navigation }: any) => {
                 </View>
             ) : (
                 <View style={{flex: 1, paddingHorizontal: 10}}>
-                    <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', gap: 2, marginBottom: 10}} onPress={() => navigation.navigate('Profile')}>
-                        <Ionicons name='arrow-back' size={18} color='#084575' />
-                        <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Späť</Text>
-                    </TouchableOpacity>
+                    <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}>
+                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', gap: 2, marginBottom: 10}} onPress={() => navigation.navigate('Profile')}>
+                            <Ionicons name='arrow-back' size={18} color='#084575' />
+                            <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Späť</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', gap: 2, marginBottom: 10}} onPress={() => Alert.alert('V prípade zmeny podržte daný preukaz')}>
+                            <Ionicons name='information-circle-outline' size={22} color='#084575' />
+                        </TouchableOpacity>
+                    </View>
                     <View style={{}}>
                         <View style={{marginBottom: 20}}>
                             <Text style={{fontSize: 18, fontWeight: 600, marginBottom: 10, textAlign: 'center', textTransform: 'uppercase'}}>Kapitánsky preukaz</Text>
                             {captainLicense ? (
-                                <View style={styles.license}>
+                                <TouchableOpacity style={styles.license} onLongPress={handleCaptainLicense}>
                                     <Image source={{uri: captainLicense}} style={{width: '100%', height: '100%', borderRadius: 15, resizeMode: 'cover'}} />
-                                </View>
+                                </TouchableOpacity>
                             ) : (
                                 <TouchableOpacity onPress={handleCaptainLicense}>
                                     <View style={styles.input}>
@@ -174,9 +179,9 @@ const License = ({ navigation }: any) => {
                         <View style={{}}>
                             <Text style={{fontSize: 18, fontWeight: 600, marginBottom: 10, textAlign: 'center', textTransform: 'uppercase'}}>VHF preukaz</Text>
                             {vhfLicense ? (
-                                <View style={styles.license}>
+                                <TouchableOpacity style={styles.license} onLongPress={handleVHFLicense}>
                                     <Image source={{uri: vhfLicense}} style={{width: '100%', height: '100%', borderRadius: 15, resizeMode: 'cover'}} />
-                                </View>
+                                </TouchableOpacity>
                             ) : (
                                 <TouchableOpacity onPress={handleVHFLicense}>
                                     <View style={styles.input}>
