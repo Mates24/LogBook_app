@@ -10,6 +10,29 @@ const License = ({ navigation }: any) => {
     const [captainLicense, setCaptainLicense] = useState<any>();
     const [vhfLicense, setVhfLicense] = useState('');
 
+    // Fetch licenses
+    const fetchLicenses = async () => {
+        setLoading(true);
+
+        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const user = await AsyncStorage.getItem('user');
+
+        if(user){
+            const userData = JSON.parse(user);
+            const userEmail = userData.email;
+            const userPassword = userData.password;
+            await pb.collection('users').authWithPassword(userEmail, userPassword);
+            const currentUser = await pb.collection('users').getOne(userData.record.id);
+            const userCaptainLicense = pb.files.getUrl(currentUser, currentUser.captain_license);
+            userData.record.captain_license = userCaptainLicense;
+            await AsyncStorage.setItem('user', JSON.stringify(userData));
+            setCaptainLicense(userCaptainLicense);
+        }
+        
+
+        setLoading(false);
+    }
+
     // Set captain license
     const handleCaptainLicense = async () => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -26,6 +49,7 @@ const License = ({ navigation }: any) => {
         });
         
         if (!result.canceled) {
+            setLoading(true);
             const uri = result.assets[0].uri;
 
             try{
@@ -44,9 +68,6 @@ const License = ({ navigation }: any) => {
                     const userData = JSON.parse(user);
                     const userEmail = userData.email;
                     const userPassword = userData.password;
-                    userData.captain_license = uri;
-
-                    await AsyncStorage.setItem('user', JSON.stringify(userData));
 
                     await pb.collection('users').authWithPassword(userEmail, userPassword);
 
@@ -54,6 +75,7 @@ const License = ({ navigation }: any) => {
                     
                     Alert.alert('Úspešne', 'Preukaz bol úspešne nahratý');
                 }
+                setLoading(false);
             }catch(error) {
                 console.log(error);
                 Alert.alert('Chyba', 'Nepodarilo sa nahrať kapitánsky preukaz');
@@ -61,7 +83,9 @@ const License = ({ navigation }: any) => {
         }
     };
 
-
+    useEffect(() => {
+        fetchLicenses();
+    }, []);
 
 
     return (
@@ -80,7 +104,7 @@ const License = ({ navigation }: any) => {
                         <View style={{marginBottom: 20}}>
                             <Text style={{fontSize: 18, fontWeight: 600, marginBottom: 10, textAlign: 'center', textTransform: 'uppercase'}}>Kapitánsky preukaz</Text>
                             {captainLicense ? (
-                                <View style={styles.input}>
+                                <View style={styles.license}>
                                     <Image source={{uri: captainLicense}} style={{width: '100%', height: '100%', borderRadius: 15, resizeMode: 'cover'}} />
                                 </View>
                             ) : (
@@ -121,5 +145,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#bbb',
         borderRadius: 15,
+    },
+
+    license: {
+        width: '100%',
+        height: 200,
+        borderRadius: 15,
+        overflow: 'hidden',
     }
 });
