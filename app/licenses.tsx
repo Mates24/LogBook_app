@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const License = ({ navigation }: any) => {
     const [loading, setLoading] = useState(false);
     const [captainLicense, setCaptainLicense] = useState<any>();
-    const [vhfLicense, setVhfLicense] = useState('');
+    const [vhfLicense, setVHFLicense] = useState<any>();
 
     // Fetch licenses
     const fetchLicenses = async () => {
@@ -21,15 +21,21 @@ const License = ({ navigation }: any) => {
             const userData = JSON.parse(user);
             const userEmail = userData.email;
             const userPassword = userData.password;
-            await pb.collection('users').authWithPassword(userEmail, userPassword);
-            const currentUser = await pb.collection('users').getOne(userData.record.id);
-            const userCaptainLicense = pb.files.getUrl(currentUser, currentUser.captain_license);
+
+            await pb.collection('users').authWithPassword(userEmail, userPassword); // Authenticate user
+
+            const currentUser = await pb.collection('users').getOne(userData.record.id); // Get current user
+            const userCaptainLicense = pb.files.getUrl(currentUser, currentUser.captain_license); // Get captain license
+            const userVHFLicense = pb.files.getUrl(currentUser, currentUser.vhf_license); // Get VHF license
+            
             userData.record.captain_license = userCaptainLicense;
+            userData.record.vhf_license = userVHFLicense;
             await AsyncStorage.setItem('user', JSON.stringify(userData));
-            setCaptainLicense(userCaptainLicense);
+
+            setCaptainLicense(userCaptainLicense); // Set captain license
+            setVHFLicense(userVHFLicense); // Set VHF license
         }
         
-
         setLoading(false);
     }
 
@@ -63,6 +69,56 @@ const License = ({ navigation }: any) => {
                 } as any);
 
                 setCaptainLicense(uri);
+
+                if(user){
+                    const userData = JSON.parse(user);
+                    const userEmail = userData.email;
+                    const userPassword = userData.password;
+
+                    await pb.collection('users').authWithPassword(userEmail, userPassword);
+
+                    await pb.collection('users').update(userData.record.id, formData);
+                    
+                    Alert.alert('Úspešne', 'Preukaz bol úspešne nahratý');
+                }
+                setLoading(false);
+            }catch(error) {
+                console.log(error);
+                Alert.alert('Chyba', 'Nepodarilo sa nahrať kapitánsky preukaz');
+            }
+        }
+    };
+
+    // Set VHF license
+    const handleVHFLicense = async () => {
+        let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+
+        if (status !== 'granted') {
+            Alert.alert('Chyba', 'Nemáte povolenie na prístup k galérii');
+            return;
+        }
+        
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+        });
+        
+        if (!result.canceled) {
+            setLoading(true);
+            const uri = result.assets[0].uri;
+
+            try{
+                const user = await AsyncStorage.getItem('user');
+
+                const formData = new FormData();
+                formData.append('vhf_license', {
+                    uri: uri,
+                    name: 'vhf_license',
+                    type: 'image/jpeg'
+                } as any);
+
+                setVHFLicense(uri);
 
                 if(user){
                     const userData = JSON.parse(user);
@@ -118,9 +174,11 @@ const License = ({ navigation }: any) => {
                         <View style={{}}>
                             <Text style={{fontSize: 18, fontWeight: 600, marginBottom: 10, textAlign: 'center', textTransform: 'uppercase'}}>VHF preukaz</Text>
                             {vhfLicense ? (
-                                <View style={styles.input}></View>
+                                <View style={styles.license}>
+                                    <Image source={{uri: vhfLicense}} style={{width: '100%', height: '100%', borderRadius: 15, resizeMode: 'cover'}} />
+                                </View>
                             ) : (
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={handleVHFLicense}>
                                     <View style={styles.input}>
                                         <Ionicons name='add-outline' size={40} color='#bbb' />
                                     </View>
