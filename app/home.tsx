@@ -39,7 +39,7 @@ const Home = ({ navigation }: Props) => {
             const userEmail = userData.email;
             const userPassword = userData.password;
             await pb.collection('users').authWithPassword(userEmail, userPassword);
-            const userAvatar = pb.files.getUrl(userData.record, userData.record.avatar, {'thumb': '100x250'});
+            const userAvatar = pb.files.getUrl(userData.record, userData.record.avatar);
             setUrl(userAvatar);
         }
     }
