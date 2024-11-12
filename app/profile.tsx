@@ -136,9 +136,9 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                 const user = await AsyncStorage.getItem('user');
 
                 const formData = new FormData();
-                formData.append('vhf_license', {
+                formData.append('avatar', {
                     uri: uri,
-                    name: 'vhf_license',
+                    name: 'avatar',
                     type: 'image/jpeg'
                 } as any);
 
