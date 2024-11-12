@@ -5,9 +5,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./login";
 import SignUp from "./signup";
 import Home from "./home";
-import Cruise from "./addCruise";
+import AddCruise from "./addCruise";
 import Profile from "./profile";
 import Licenses from "./licenses";
+import Cruise from "./cruise";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,9 +29,10 @@ export default function RootLayout() {
         {isSignedIn ? (
           <>
             <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
-            <Stack.Screen name="Cruise" component={Cruise} options={{headerShown: false}}/>
-            <Stack.Screen name="Profile"options={{headerShown: false}}>{props => <Profile {...props} onSignOut={handleSignOut} />}</Stack.Screen>
+            <Stack.Screen name="AddCruise" component={AddCruise} options={{headerShown: false}}/>
+            <Stack.Screen name="Profile" options={{headerShown: false}}>{props => <Profile {...props} onSignOut={handleSignOut} />}</Stack.Screen>
             <Stack.Screen name="Licenses" component={Licenses} options={{headerShown: false}}/>
+            <Stack.Screen name="Cruise" component={Cruise} options={{headerShown: false}}/>
 
           </>
         ) : (
