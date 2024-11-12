@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Pocketbase from 'pocketbase';
+import * as ImagePicker from 'expo-image-picker';
 
 interface Props {
     navigation: NavigationProp<any>;
@@ -17,7 +18,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
     const [userLastName, setUserLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [location, setLocation] = useState<string>('');
-    const [url, setUrl] = useState<string>('');
+    const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [editable, setEditable] = useState<boolean>(false);
     const textInputRef = useRef<TextInput>(null);
 
@@ -31,7 +32,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
             const userPassword = userData.password;
             await pb.collection('users').authWithPassword(userEmail, userPassword);
             const userAvatar = pb.files.getUrl(userData.record, userData.record.avatar, {'thumb': '100x250'});
-            setUrl(userAvatar);
+            setAvatarUrl(userAvatar);
         }
     }
 
@@ -113,6 +114,55 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         Alert.alert('Boli ste úspešne odhlásený');
     };
 
+    const handleAvatarPick = async () => {
+        let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+
+        if (status !== 'granted') {
+            Alert.alert('Chyba', 'Nemáte povolenie na prístup k galérii');
+            return;
+        }
+        
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+        });
+        
+        if (!result.canceled) {
+            setLoading(true);
+            const uri = result.assets[0].uri;
+
+            try{
+                const user = await AsyncStorage.getItem('user');
+
+                const formData = new FormData();
+                formData.append('vhf_license', {
+                    uri: uri,
+                    name: 'vhf_license',
+                    type: 'image/jpeg'
+                } as any);
+
+                setAvatarUrl(uri);
+
+                if(user){
+                    const userData = JSON.parse(user);
+                    const userEmail = userData.email;
+                    const userPassword = userData.password;
+
+                    await pb.collection('users').authWithPassword(userEmail, userPassword);
+
+                    await pb.collection('users').update(userData.record.id, formData);
+                    
+                    Alert.alert('Úspešne', 'Preukaz bol úspešne nahratý');
+                }
+                setLoading(false);
+            }catch(error) {
+                console.log(error);
+                Alert.alert('Chyba', 'Nepodarilo sa nahrať kapitánsky preukaz');
+            }
+        }
+    }
+
     useEffect(() => {
         getUserAvatar();
         fetchData();
@@ -149,10 +199,10 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 25, paddingBottom: 30, marginBottom: 10, borderRadius: 20, shadowColor: '#808080', shadowOffset: {width: 0, height: 5}, shadowOpacity: .5, shadowRadius: 3, backgroundColor: '#F0F0F0'}}>
                         <View style={{position: 'relative'}}>
                             <Image 
-                                source={url ? { uri: url } : require('../assets/images/avatar.png')}
+                                source={avatarUrl ? { uri: avatarUrl } : require('../assets/images/avatar.png')}
                                 style={{width: 90, height: 90, borderRadius: 50, marginRight: 15}}
                             />
-                            <TouchableOpacity style={{position: 'absolute', bottom: 0, right: 15, padding: 5, backgroundColor: '#E7D5A7', borderRadius: 25}}>
+                            <TouchableOpacity style={{position: 'absolute', bottom: 0, right: 15, padding: 5, backgroundColor: '#E7D5A7', borderRadius: 25}} onPress={handleAvatarPick}>
                                 <Ionicons name='camera-outline' size={20} color='black'/>
                             </TouchableOpacity>
                         </View>
