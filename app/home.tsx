@@ -189,12 +189,13 @@ const Home = ({ navigation }: Props) => {
             fetchWeather(location.coords.latitude, location.coords.longitude);
         })();
 
-        getCruise();
         getUserAvatar();
+        getCruise();
     }, []);
 
     useFocusEffect(
         useCallback(() => {
+            getUserAvatar();
             getCruise();
         }, [])
     );
@@ -269,7 +270,7 @@ const Home = ({ navigation }: Props) => {
                         <ScrollView style={{borderTopWidth: 0.2, borderColor: 'rgba(0,0,0,0.2)', paddingTop: 5}}>
                             {cruises.length > 0 ?
                                 cruises.map(cruise => (
-                                    <TouchableOpacity style={{width: '100%', height: 125, borderWidth: 2, borderRadius: 16, padding: 10, marginBottom: 10}} key={cruise.id}>
+                                    <TouchableOpacity style={{width: '100%', height: 125, borderWidth: 2, borderRadius: 16, padding: 10, marginBottom: 10}} key={cruise.id} onPress={() => navigation.navigate('Cruise', { cruise })}>
                                         <View style={{flexDirection: 'row', flex: 1.5, gap: 10}}>
                                             <Image 
                                                 source={require('../assets/images/imgage.png')}
