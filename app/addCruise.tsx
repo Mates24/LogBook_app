@@ -11,7 +11,7 @@ interface CrewMembersObject {
     [key: string]: any;
 }
 
-const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
+const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const [isFocus, setIsFocus] = useState(false); // Dropdown focus
 
     // Cruise inputs
@@ -401,7 +401,7 @@ const Cruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     );
 }
 
-export default Cruise;
+export default AddCruise;
 
 const styles = StyleSheet.create({
     labels: {
