@@ -147,12 +147,15 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                         </View>
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 25, paddingBottom: 30, marginBottom: 10, borderRadius: 20, shadowColor: '#808080', shadowOffset: {width: 0, height: 5}, shadowOpacity: .5, shadowRadius: 3, backgroundColor: '#F0F0F0'}}>
-                        <TouchableOpacity>
+                        <View style={{position: 'relative'}}>
                             <Image 
                                 source={url ? { uri: url } : require('../assets/images/avatar.png')}
                                 style={{width: 90, height: 90, borderRadius: 50, marginRight: 15}}
                             />
-                        </TouchableOpacity>
+                            <TouchableOpacity style={{position: 'absolute', bottom: 0, right: 15, padding: 5, backgroundColor: '#E7D5A7', borderRadius: 25}}>
+                                <Ionicons name='camera-outline' size={20} color='black'/>
+                            </TouchableOpacity>
+                        </View>
                         <View>
                             <TextInput
                               ref={textInputRef}
