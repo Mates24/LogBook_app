@@ -39,8 +39,18 @@ const Login = ({ navigation, onSignIn }: Props) => {
         Alert.alert('Nastala chyba pri prihlasovaní! Skúste to znova neskôr.');
         console.log(err);
       };
-    }
-  }
+    };
+  };
+
+  const passwordReset = async () => {
+    const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+    try{
+      await pb.collection('users').requestPasswordReset(email);
+      Alert.alert('Na váš e-mail bol odoslaný link na obnovenie hesla.');
+    } catch(err){
+      console.log(err);
+    };
+  };
 
   return (
     <SafeAreaView
@@ -66,8 +76,8 @@ const Login = ({ navigation, onSignIn }: Props) => {
               style={{paddingLeft: 10, width: '100%', height: 40, color: '#000', borderWidth: 1, borderRadius: 10, borderColor: '#808080', backgroundColor: '#fff'}}
           />
         </View>
-        <View style={{width: '80%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10}}>
-          <Text style={{alignSelf: 'flex-start', paddingLeft: 10}}>Password:</Text>
+        <View style={{width: '80%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{alignSelf: 'flex-start', paddingLeft: 10, marginBottom: 10}}>Password:</Text>
           <TextInput
               placeholder="Password"
               placeholderTextColor={'#808080'}
@@ -76,6 +86,9 @@ const Login = ({ navigation, onSignIn }: Props) => {
               onChangeText={setPassword}
               style={{paddingLeft: 10, width: '100%', height: 40, color: '#000', borderWidth: 1, borderRadius: 10, borderColor: '#808080', backgroundColor: '#fff'}}
           />
+          <TouchableOpacity onPress={passwordReset} style={{alignSelf: 'flex-end', paddingRight: 5, paddingTop: 5, }}>
+            <Text style={{color: '#084575', fontSize: 13, fontWeight: 500}}>Zabudli ste heslo?</Text>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={handleLogin}>
           <Text style={{color: '#084575', fontSize: 19, fontWeight: 600}}>Prihlásiť sa</Text>
