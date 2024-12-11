@@ -53,15 +53,7 @@ const Login = ({ navigation, onSignIn }: Props) => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 15,
-        backgroundColor: '#F3EFD5'
-      }}
-    >
+    <SafeAreaView style={{flex: 1, justifyContent: "center", alignItems: "center", gap: 15, backgroundColor: '#F3EFD5'}}>
         <Text style={{fontSize: 32, textTransform: 'uppercase', fontWeight: 700}}>Prihláste sa</Text>
         <View style={{width: '80%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10}}>
           <Text style={{alignSelf: 'flex-start', paddingLeft: 10}}>E-mail:</Text>
