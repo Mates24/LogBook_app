@@ -19,7 +19,7 @@ const Login = ({ navigation, onSignIn }: Props) => {
 
     if (!email || !password) {
       Alert.alert("Prosím vyplňte všetky polia!");
-    }
+    };
 
     try{
       const user = await pb.collection('users').authWithPassword(email, password);
