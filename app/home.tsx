@@ -263,7 +263,7 @@ const Home = ({ navigation }: Props) => {
                     <View style={{flex: 1, marginTop: 20, paddingHorizontal: 10}}>
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5}}>
                             <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase'}}>Cruises</Text>
-                            <TouchableOpacity onPress={() => navigation.navigate('Cruise')}>
+                            <TouchableOpacity onPress={() => navigation.navigate('AddCruise')}>
                                 <Text style={{fontSize: 16, fontWeight: 600, textTransform: 'uppercase', color: '#808080'}}>Pridať plabu</Text>
                             </TouchableOpacity>
                         </View>
