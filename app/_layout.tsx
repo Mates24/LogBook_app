@@ -33,7 +33,6 @@ export default function RootLayout() {
             <Stack.Screen name="Profile" options={{headerShown: false}}>{props => <Profile {...props} onSignOut={handleSignOut} />}</Stack.Screen>
             <Stack.Screen name="Licenses" component={Licenses} options={{headerShown: false}}/>
             <Stack.Screen name="Cruise" component={Cruise} options={{headerShown: false}}/>
-
           </>
         ) : (
           <>
