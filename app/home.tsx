@@ -16,9 +16,12 @@ interface Cruise {
     id: string;
     country: string;
     date: string;
-    sails: number;
-    engine: number;
-    time: number;
+    day_cruise: {
+        sails: number;
+        engine: number;
+        total: number;
+        time: number;
+    } | null;
 };
 
 const Home = ({ navigation }: Props) => {
@@ -121,8 +124,10 @@ const Home = ({ navigation }: Props) => {
                         id: record.id,
                         country: record.country,
                         date: record.from.split(' ')[0].split('-').reverse().join('.') + ' - ' + record.to.split(' ')[0].split('-').reverse().join('.'),
+                        day_cruise: record.day_cruise ? record.day_cruise : null,
                         sails: record.day_cruise ? record.day_cruise.sails || 0 : 0,
                         engine: record.day_cruise ? record.day_cruise.engine || 0 : 0,
+                        total: record.day_cruise ? record.day_cruise.total || 0 : 0,
                         time: record.day_cruise ? record.day_cruise.time || 0 : 0,
                     }));
 
