@@ -20,7 +20,7 @@ interface Cruise {
         sails: number;
         engine: number;
         total: number;
-        time: number;
+        time: string;
     } | null;
 };
 
@@ -289,15 +289,19 @@ const Home = ({ navigation }: Props) => {
                                         <View style={{flexDirection: 'row', flex: 1, gap: 15, alignItems: 'flex-end'}}>
                                             <View>
                                                 <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Plachty</Text>
-                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.sails} mi</Text>
+                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.sails || 0), 0) : '0'} mi</Text>
                                             </View>
                                             <View>
                                                 <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Motor</Text>
-                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.engine} mi</Text>
+                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.engine || 0), 0) : '0'} mi</Text>
                                             </View>
                                             <View>
                                                 <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Čas</Text>
-                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.time}</Text>
+                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? new Date(
+                                                    cruise.day_cruise.reduce((totalSeconds, curr) => {
+                                                        const [h, m, s] = (curr.time || '00:00:00').split(':').map(Number);
+                                                        return totalSeconds + h * 3600 + m * 60 + s;
+                                                    }, 0) * 1000).toISOString().substring(11, 19) : '00:00:00'}</Text>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
