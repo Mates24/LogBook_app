@@ -1,28 +1,42 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, Image, Modal, Button, TextInput } from 'react-native';
+import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, Image, Modal, Button, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Pocketbase from 'pocketbase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Cruise = ({ route, navigation }: any) => {
     const { cruise } = route.params;
     const { day } = route.params;
 
+    // Modal for adding new day
     const [isModalVisible, setModalVisible] = useState(false);
     const [dayName, setDayName] = useState('');
     const [dayDate, setDayDate] = useState<Date>();
     const [showDatePicker, setShowDatePicker] = useState(false);
 
+    // Reset day date
+    const resetDayDate = () => {
+        setDayDate(undefined);
+        setDayName('');
+    };
+
+    // Open and close modal
     const handleOpenModal = () => {
         setModalVisible(true);
     }
     const handleCloseModal = () => {
         setModalVisible(false);
+        resetDayDate();
     }
 
+    // Date picker
     const [mode, setMode] = useState<'date' | 'time'>('date');
     const handleDateChange = ({ type }: any, selectedDate: Date | undefined) => {
         if (type === 'set' && selectedDate) {
             setDayDate(new Date(selectedDate));
+            const dayName = new Intl.DateTimeFormat('sk-SK', { weekday: 'long' }).format(selectedDate);
+            setDayName(dayName);
         } else {
             setShowDatePicker(false);
         }
@@ -34,8 +48,53 @@ const Cruise = ({ route, navigation }: any) => {
     const showDayDatePicker = () => {
         showModeFrom('date');
     };
-    const hideDayDatePicker = () => {
-        setShowDatePicker(false);
+
+    // Add new day
+    const handleAddDay = async() => {
+        // Auth user with Pocketbase
+        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const user = await AsyncStorage.getItem('user');
+        if(user){
+            const userData = JSON.parse(user);
+            const userEmail = userData.email;
+            const userPassword = userData.password;
+            await pb.collection('users').authWithPassword(userEmail, userPassword);
+
+            try{
+                // Add new day
+                const dayData = {
+                    date: dayDate?.toISOString().split('T')[0].split('-').reverse().join('.'),
+                    day: dayName?.charAt(0).toUpperCase() + dayName?.slice(1),
+                    engine: 0,
+                    sails: 0,
+                    time: '00:00:00',
+                    total: 0,
+                };
+            
+                const oldDayCruise = cruise.day_cruise;
+                const newDayCruise = [...oldDayCruise, dayData];
+
+                await pb.collection('cruises').update(cruise.id, { day_cruise: newDayCruise });
+                handleCloseModal();
+                navigation.navigate('Cruise', { cruise });
+
+                cruise.day_cruise = newDayCruise;
+                const updatedUser = {
+                    ...userData,
+                    cruises: userData.cruises?.map((c: any) => 
+                        c.id === cruise.id ? { ...c, day_cruise: newDayCruise } : c
+                    )
+                };
+                await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+
+                Alert.alert('Info', 'Nový deň bol pridaný');
+
+                resetDayDate();
+            }catch(err){
+                Alert.alert('Chyba', 'Nepodarilo sa pridať nový deň');
+                console.log(err);
+            };
+        };
     };
 
     return (
@@ -108,7 +167,7 @@ const Cruise = ({ route, navigation }: any) => {
                             )}
                             <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
                                 <Button title="Zrušiť" onPress={handleCloseModal} color="red" />
-                                <Button title="Pridať" onPress={() => console.log('pressed')} />
+                                <Button title="Pridať" onPress={handleAddDay} />
                             </View>
                         </View>
                     </View>
