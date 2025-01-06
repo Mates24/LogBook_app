@@ -153,12 +153,14 @@ const Home = ({ navigation }: Props) => {
     const screenWidth = Dimensions.get('window').width;
     const chartConfig = {
         backgroundGradientFrom: "#FFF",
-        backgroundGradientTo: "#fff",
+        backgroundGradientFromOpacity: 0,
+        backgroundGradientTo: "#FFF",
+        backgroundGradientToOpacity: 0,
         decimalPlaces: 0,
         color: (opacity = 1) => `rgba(8,69,117,${opacity})`,
         fillShadowGradienFrom: "#084575",
-        fillShadowGradientTo: "#084575",
         fillShadowGradientFromOpacity: 1,
+        fillShadowGradientTo: "#084575",
         fillShadowGradientToOpacity: 1,
         labelColor: () => `#000`,
         barPercentage: 0.8,
@@ -251,19 +253,21 @@ const Home = ({ navigation }: Props) => {
                     </View>
                     <View style={{alignItems: 'center'}}>
                         <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase', marginBottom: 10}}>Sailed miles this week</Text>
-                        <BarChart 
-                           style={{ borderRadius: 16, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 1 }}
-                           data={chartData}
-                           width={screenWidth - 20}
-                           height={180}
-                           yAxisLabel=''
-                           yAxisSuffix=''
-                           chartConfig={chartConfig}
-                           showBarTops={false}
-                           withHorizontalLabels={false}
-                           fromZero={true}
-                           showValuesOnTopOfBars={true}
-                        />
+                        <View style={{borderRadius: 16, justifyContent: 'center', alignItems: 'center', paddingInline: 25, paddingBlock: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 1, overflowX: 'hidden', backgroundColor: '#FFF'}}>
+                            <BarChart
+                               style={{marginLeft: -65}}
+                               data={chartData}
+                               width={screenWidth - 20}
+                               height={180}
+                               yAxisLabel='mi'
+                               yAxisSuffix=''
+                               chartConfig={chartConfig}
+                               showBarTops={false}
+                               withHorizontalLabels={false}
+                               fromZero={true}
+                               showValuesOnTopOfBars={true}
+                            />
+                        </View>
                     </View>
                     <View style={{flex: 1, marginTop: 20, paddingHorizontal: 10}}>
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5}}>
