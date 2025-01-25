@@ -113,12 +113,11 @@ const Home = ({ navigation }: Props) => {
 
                 
                 if (record) {
-                    const records = await pb.collection('cruises').getFullList(10000, {
+                    const records = await pb.collection('cruises').getFullList({
                         filter: `user = '${userData.record.id}'`,
-                        expand: 'country,day_cruise,image,from,to',
+                        expand: 'day_cruise',
                         sort: '-from',
                     });
-
 
                     const formattedCruises = records.map(record => ({
                         id: record.id,
