@@ -9,6 +9,7 @@ import AddCruise from "./addCruise";
 import Profile from "./profile";
 import Licenses from "./licenses";
 import Cruise from "./cruise";
+import DayCruise from "./dayCruise";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,8 @@ export default function RootLayout() {
             <Stack.Screen name="Profile" options={{headerShown: false}}>{props => <Profile {...props} onSignOut={handleSignOut} />}</Stack.Screen>
             <Stack.Screen name="Licenses" component={Licenses} options={{headerShown: false}}/>
             <Stack.Screen name="Cruise" component={Cruise} options={{headerShown: false}}/>
+            <Stack.Screen name="DayCruise" component={DayCruise} options={{headerShown: false}}/>
+
           </>
         ) : (
           <>
