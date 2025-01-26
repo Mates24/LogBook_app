@@ -11,6 +11,23 @@ const Cruise = ({ route, navigation }: any) => {
     const [loading, setLoading] = useState(true);
     const [reaload, setReload] = useState(false);
 
+    // Get cruise image
+    const [url, setUrl] = useState<string>('');
+
+    const getCruiseImg = async () => {
+        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const user = await AsyncStorage.getItem('user');
+        if(user){
+            const userData = JSON.parse(user);
+            const userEmail = userData.email;
+            const userPassword = userData.password;
+            await pb.collection('users').authWithPassword(userEmail, userPassword);
+            const record = await pb.collection('cruises').getOne(cruise.id);
+            const cruiseImgUrl = pb.files.getUrl(record, record.image);
+            setUrl(cruiseImgUrl);
+        }
+    }
+
     // Get day cruise
     var [dayCruises, setDayCruises] = useState<any[]>([]);
 
@@ -31,13 +48,14 @@ const Cruise = ({ route, navigation }: any) => {
                         filter: `cruise = '${cruise.id}'`,
                         sort: 'date',
                     });
-                    console.log(dayCruisesPb);
 
                     const formattedDayCruises = dayCruisesPb.map(dayCruise => ({
                         id: dayCruise.id,
                         date: dayCruise.date.split(' ')[0].split('-').reverse().join('.'),
                         day: dayCruise.day,
-                        hour_record: dayCruise.hour_record,
+                        from_port: dayCruise.from_port,
+                        to_port: dayCruise.to_port,
+                        hourRecord: dayCruise.hour_record,
                         engine: dayCruise.engine,
                         sails: dayCruise.sails,
                         total: dayCruise.total,
@@ -57,12 +75,16 @@ const Cruise = ({ route, navigation }: any) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [dayName, setDayName] = useState('');
     const [dayDate, setDayDate] = useState<Date>();
+    const [fromPort, setFromPort] = useState('');
+    const [toPort, setToPort] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
 
-    // Reset day date
-    const resetDayDate = () => {
+    // Reset inputs
+    const resetInputs = () => {
         setDayDate(undefined);
         setDayName('');
+        setFromPort('');
+        setToPort('');
     };
 
     // Open and close modal
@@ -71,7 +93,7 @@ const Cruise = ({ route, navigation }: any) => {
     }
     const handleCloseModal = () => {
         setModalVisible(false);
-        resetDayDate();
+        resetInputs();
     }
 
     // Date picker
@@ -97,6 +119,7 @@ const Cruise = ({ route, navigation }: any) => {
     const handleAddDay = async() => {
         const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
         const user = await AsyncStorage.getItem('user');
+        
         if(user){
             const userData = JSON.parse(user);
             const userEmail = userData.email;
@@ -107,6 +130,8 @@ const Cruise = ({ route, navigation }: any) => {
                 const dayData = {
                     date: dayDate?.toISOString(),
                     day: dayName?.charAt(0).toUpperCase() + dayName?.slice(1),
+                    from_port: fromPort,
+                    to_port: toPort,
                     hour_record: [],
                     engine: 0,
                     sails: 0,
@@ -114,16 +139,11 @@ const Cruise = ({ route, navigation }: any) => {
                     time: '00:00:00',
                     cruise: cruise.id,
                 };
-            
                 await pb.collection('day_cruise').create(dayData);
-
                 handleCloseModal();
-                
-                Alert.alert('Info', 'Nový deň bol pridaný');
-                
+                Alert.alert('Info', 'Nový deň bol pridaný');                
                 setReload(!reaload);
-                
-                resetDayDate();
+                resetInputs();
             }catch(err){
                 Alert.alert('Chyba', 'Nepodarilo sa pridať nový deň');
                 console.log(err);
@@ -133,6 +153,7 @@ const Cruise = ({ route, navigation }: any) => {
 
     useEffect(() => {
         getDayCruises();
+        getCruiseImg();
     }, [reaload]);
 
     return (
@@ -148,20 +169,20 @@ const Cruise = ({ route, navigation }: any) => {
                             <Ionicons name='arrow-back' size={18} color='#084575' />
                             <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Späť</Text>
                         </TouchableOpacity>
-                        <View style={{flexDirection: 'row', paddingRight: 10, paddingBottom: 10, alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)'}}>
+                        <View style={{flexDirection: 'row', paddingRight: 10, paddingBottom: 15, paddingTop: 5, alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)'}}>
                             <View style={{paddingInline: 10}}>
-                                <Text style={{width: '100%', fontSize: 24, fontWeight: 600, textTransform: 'uppercase'}}>{cruise.country}</Text>
+                                <Text style={{width: '100%', fontSize: 26, fontWeight: 700, textTransform: 'uppercase'}}>{cruise.country}</Text>
                                 <Text style={{fontWeight: 500, color: '#808080'}}>{cruise.date}</Text>
                             </View>
                             <Image 
-                                source={require('../assets/images/imgage.png')}
-                                style={{width: 55, aspectRatio: 1}}    
+                                source={url ? { uri: url } : require('../assets/images/imgage.png')}
+                                style={{width: 55, aspectRatio: 1, borderRadius: 5}}    
                             />
                         </View>
                         <ScrollView>
                             {dayCruises.length > 0 ?
                                 dayCruises.map((dayCruise: any) => (
-                                    <TouchableOpacity key={dayCruise.date} style={{flexDirection:'row', alignItems: 'center', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)'}} onPress={() => navigation.navigate('DayCruise', { dayCruise })}>
+                                    <TouchableOpacity key={dayCruise.date} style={{flexDirection:'row', alignItems: 'center', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)'}} onPress={() => navigation.navigate('DayCruise', { ...route.params, dayCruise })}>
                                         <View>
                                             <Text style={{fontSize: 16, fontWeight: 500, letterSpacing: 1}}>{dayCruise.day}</Text>
                                             <Text>{dayCruise.date}</Text>
@@ -192,13 +213,15 @@ const Cruise = ({ route, navigation }: any) => {
                     >
                         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
                             <View style={{width: '80%', padding: 20, backgroundColor: '#fff', borderRadius: 10}}>
-                                <Text style={{fontSize: 16, fontWeight: 500, marginBottom: 10}}>Zadajte deň plavby</Text>
-                                <TouchableOpacity onPress={showDayDatePicker}>
+                                <Text style={{fontSize: 18, fontWeight: 600, marginBottom: 15, textTransform: 'uppercase'}}>Zadajte deň plavby</Text>
+                                <TouchableOpacity style={{flexDirection: 'row', gap: 10}} onPress={showDayDatePicker}>
+                                    <Text style={{fontWeight: 600}}>Dátum:</Text>
                                     <TextInput
                                         placeholder="Vyberte dátum"
                                         value={dayDate ? dayDate.toISOString().split('T')[0].split('-').reverse().join('.') : ''}
                                         editable={false}
                                         onPressIn={showDayDatePicker}
+                                        placeholderTextColor={'#808080'}
                                     />
                                 </TouchableOpacity>
                                 {showDatePicker && (
@@ -209,6 +232,22 @@ const Cruise = ({ route, navigation }: any) => {
                                         onChange={handleDateChange}
                                     />
                                 )}
+                                <View style={{flexDirection: 'row', gap: 10, marginTop: 5}}>
+                                    <Text style={{fontWeight: 600}}>Z prístavu:</Text>
+                                    <TextInput
+                                        placeholder="Prístav"
+                                        value={fromPort}
+                                        onChangeText={setFromPort}
+                                    />
+                                </View>
+                                <View style={{flexDirection: 'row', gap: 10, marginTop: 5}}>
+                                    <Text style={{fontWeight: 600}}>Do prístavu:</Text>
+                                    <TextInput
+                                        placeholder="Prístav"
+                                        value={toPort}
+                                        onChangeText={setToPort}
+                                    />
+                                </View>
                                 <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
                                     <Button title="Zrušiť" onPress={handleCloseModal} color="red" />
                                     <Button title="Pridať" onPress={handleAddDay} />
