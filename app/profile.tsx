@@ -153,12 +153,12 @@ const Profile = ({ navigation, onSignOut }: Props) => {
 
                     await pb.collection('users').update(userData.record.id, formData);
                     
-                    Alert.alert('Úspešne', 'Preukaz bol úspešne nahratý');
+                    Alert.alert('Úspešne', 'Profilová fotka bola úspešne nahratá!');
                 }
                 setLoading(false);
             }catch(error) {
                 console.log(error);
-                Alert.alert('Chyba', 'Nepodarilo sa nahrať kapitánsky preukaz');
+                Alert.alert('Chyba', 'Nepodarilo sa nahrať profilový fotku!');
             }
         }
     }
