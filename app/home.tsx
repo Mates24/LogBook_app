@@ -22,6 +22,7 @@ interface Cruise {
         total: number;
         time: string;
     } | null;
+    image: any;
 };
 
 const Home = ({ navigation }: Props) => {
@@ -111,7 +112,6 @@ const Home = ({ navigation }: Props) => {
 
                 const record = await pb.collection('users').getOne(userData.record.id);
 
-                
                 if (record) {
                     const records = await pb.collection('cruises').getFullList({
                         filter: `user = '${userData.record.id}'`,
@@ -128,6 +128,7 @@ const Home = ({ navigation }: Props) => {
                         engine: record.day_cruise ? record.day_cruise.engine || 0 : 0,
                         total: record.day_cruise ? record.day_cruise.total || 0 : 0,
                         time: record.day_cruise ? record.day_cruise.time || 0 : 0,
+                        image: record.image ? { uri: pb.files.getUrl(record, record.image) } : require('../assets/images/imgage.png'),
                     }));
 
                     setCruises(formattedCruises);
@@ -278,33 +279,35 @@ const Home = ({ navigation }: Props) => {
                         <ScrollView style={{borderTopWidth: 0.2, borderColor: 'rgba(0,0,0,0.2)', paddingTop: 5}}>
                             {cruises.length > 0 ?
                                 cruises.map(cruise => (
-                                    <TouchableOpacity style={{width: '100%', height: 125, borderWidth: 2, borderRadius: 16, padding: 10, marginBottom: 10}} key={cruise.id} onPress={() => navigation.navigate('Cruise', { cruise })}>
-                                        <View style={{flexDirection: 'row', flex: 1.5, gap: 10}}>
+                                    <TouchableOpacity style={{width: '100%', height: 115, borderWidth: 2, borderRadius: 16, padding: 10, marginBottom: 10}} key={cruise.id} onPress={() => navigation.navigate('Cruise', { cruise })}>
+                                        <View style={{flexDirection: 'row', flex: 1, gap: 10, alignItems: 'center'}}>
                                             <Image 
-                                                source={require('../assets/images/imgage.png')}
-                                                style={{height: '100%', width: 50}}    
+                                                source={cruise.image}
+                                                style={{width: 90, aspectRatio: 1, borderRadius: 10}}    
                                             />
-                                            <View style={{display: 'flex'}}>
-                                                <Text style={{fontSize: 22, fontWeight: 600}}>{cruise.country}</Text>
-                                                <Text style={{fontSize: 12, paddingLeft: 1}}>{cruise.date}</Text>
-                                            </View>
-                                        </View>
-                                        <View style={{flexDirection: 'row', flex: 1, gap: 15, alignItems: 'flex-end'}}>
-                                            <View>
-                                                <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Plachty</Text>
-                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.sails || 0), 0) : '0'} mi</Text>
-                                            </View>
-                                            <View>
-                                                <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Motor</Text>
-                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.engine || 0), 0) : '0'} mi</Text>
-                                            </View>
-                                            <View>
-                                                <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Čas</Text>
-                                                <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? new Date(
-                                                    cruise.day_cruise.reduce((totalSeconds, curr) => {
-                                                        const [h, m, s] = (curr.time || '00:00:00').split(':').map(Number);
-                                                        return totalSeconds + h * 3600 + m * 60 + s;
-                                                    }, 0) * 1000).toISOString().substring(11, 19) : '00:00:00'}</Text>
+                                            <View style={{display: 'flex', justifyContent: 'space-between', height: 90, paddingTop: 1, paddingBottom: 3}}>
+                                                <View>
+                                                    <Text style={{fontSize: 22, fontWeight: 600}}>{cruise.country}</Text>
+                                                    <Text style={{fontSize: 12, paddingLeft: 1}}>{cruise.date}</Text>
+                                                </View>
+                                                <View style={{flexDirection: 'row', gap: 15, alignItems: 'flex-end'}}>
+                                                    <View>
+                                                        <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Plachty</Text>
+                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.sails || 0), 0) : '0'} mi</Text>
+                                                    </View>
+                                                    <View>
+                                                        <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Motor</Text>
+                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.engine || 0), 0) : '0'} mi</Text>
+                                                    </View>
+                                                    <View>
+                                                        <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Čas</Text>
+                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? new Date(
+                                                            cruise.day_cruise.reduce((totalSeconds, curr) => {
+                                                                const [h, m, s] = (curr.time || '00:00:00').split(':').map(Number);
+                                                                return totalSeconds + h * 3600 + m * 60 + s;
+                                                            }, 0) * 1000).toISOString().substring(11, 19) : '00:00:00'}</Text>
+                                                    </View>
+                                                </View>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
