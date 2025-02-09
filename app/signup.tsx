@@ -13,7 +13,7 @@ const SignUp = ({ navigation }: Props) => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+  const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
   const handleSignup = async () => {
     if (!username || !email || !password || !passwordConfirm) {

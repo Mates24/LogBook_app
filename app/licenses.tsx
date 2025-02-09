@@ -14,7 +14,7 @@ const License = ({ navigation }: any) => {
     const fetchLicenses = async () => {
         setLoading(true);
 
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
 
         if(user){
@@ -42,7 +42,7 @@ const License = ({ navigation }: any) => {
     // Set captain license
     const handleCaptainLicense = async () => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
         if (status !== 'granted') {
             Alert.alert('Chyba', 'Nemáte povolenie na prístup k galérii');
@@ -92,7 +92,7 @@ const License = ({ navigation }: any) => {
     // Set VHF license
     const handleVHFLicense = async () => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
         if (status !== 'granted') {
             Alert.alert('Chyba', 'Nemáte povolenie na prístup k galérii');

@@ -15,7 +15,7 @@ const Login = ({ navigation, onSignIn }: Props) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+    const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
     if (!email || !password) {
       Alert.alert("Prosím vyplňte všetky polia!");
@@ -43,7 +43,7 @@ const Login = ({ navigation, onSignIn }: Props) => {
   };
 
   const passwordReset = async () => {
-    const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+    const pb = new Pocketbase('https://mathiasdb.em1t.me/');
     try{
       await pb.collection('users').requestPasswordReset(email);
       Alert.alert('Na váš e-mail bol odoslaný link na obnovenie hesla.');

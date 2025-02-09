@@ -24,7 +24,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
 
     // Get users avatar
     const getUserAvatar = async () => {
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
         if(user){
             const userData = JSON.parse(user);
@@ -39,7 +39,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
     // Fetch user data
     const fetchData = async () => {
         setLoading(true);
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
 
         if (user) {
@@ -67,7 +67,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
     const saveChanges = async () => {
         setEditable(false); // Disable editing
 
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const userFullName = `${firstName} ${userLastName}`;
         
         const user = await AsyncStorage.getItem('user');
@@ -116,7 +116,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
 
     const handleAvatarPick = async () => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
         if (status !== 'granted') {
             Alert.alert('Chyba', 'Nemáte povolenie na prístup k galérii');

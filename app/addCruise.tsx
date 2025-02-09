@@ -118,7 +118,7 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     ];
 
     // Add cruise
-    const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+    const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
     const transformedCrewMembers = crewMembers.reduce((acc: CrewMembersObject, member, index) => {
         acc[`member_${index}`] = member;

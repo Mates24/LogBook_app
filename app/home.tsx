@@ -36,7 +36,7 @@ const Home = ({ navigation }: Props) => {
     
     // Get users avatar
     const getUserAvatar = async () => {
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
         if(user){
             const userData = JSON.parse(user);
@@ -96,7 +96,7 @@ const Home = ({ navigation }: Props) => {
     // Cruises
     const getCruise = async () => {
         setLoading(true);
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
 
         if(!user){

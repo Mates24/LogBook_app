@@ -15,7 +15,7 @@ const Cruise = ({ route, navigation }: any) => {
     const [url, setUrl] = useState<string>('');
 
     const getCruiseImg = async () => {
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
         if(user){
             const userData = JSON.parse(user);
@@ -32,7 +32,7 @@ const Cruise = ({ route, navigation }: any) => {
     var [dayCruises, setDayCruises] = useState<any[]>([]);
 
     const getDayCruises = async() => {
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
         if(user){
             try{
@@ -117,7 +117,7 @@ const Cruise = ({ route, navigation }: any) => {
 
     // Add new day
     const handleAddDay = async() => {
-        const pb = new Pocketbase('https://mathiasdb.em1t.xyz/');
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
         
         if(user){
