@@ -6,14 +6,12 @@ import Pocketbase from 'pocketbase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const License = ({ navigation }: any) => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [captainLicense, setCaptainLicense] = useState<any>();
     const [vhfLicense, setVHFLicense] = useState<any>();
 
     // Fetch licenses
     const fetchLicenses = async () => {
-        setLoading(true);
-
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
 
@@ -21,22 +19,27 @@ const License = ({ navigation }: any) => {
             const userData = JSON.parse(user);
             const userEmail = userData.email;
             const userPassword = userData.password;
+            try{
 
-            await pb.collection('users').authWithPassword(userEmail, userPassword); // Authenticate user
+                await pb.collection('users').authWithPassword(userEmail, userPassword); // Authenticate user
 
-            const currentUser = await pb.collection('users').getOne(userData.record.id); // Get current user
-            const userCaptainLicense = pb.files.getUrl(currentUser, currentUser.captain_license); // Get captain license
-            const userVHFLicense = pb.files.getUrl(currentUser, currentUser.vhf_license); // Get VHF license
-            
-            userData.record.captain_license = userCaptainLicense;
-            userData.record.vhf_license = userVHFLicense;
-            await AsyncStorage.setItem('user', JSON.stringify(userData));
+                const currentUser = await pb.collection('users').getOne(userData.record.id); // Get current user
+                const userCaptainLicense = pb.files.getUrl(currentUser, currentUser.captain_license); // Get captain license
+                const userVHFLicense = pb.files.getUrl(currentUser, currentUser.vhf_license); // Get VHF license
+                
+                userData.record.captain_license = userCaptainLicense;
+                userData.record.vhf_license = userVHFLicense;
+                await AsyncStorage.setItem('user', JSON.stringify(userData));
 
-            setCaptainLicense(userCaptainLicense); // Set captain license
-            setVHFLicense(userVHFLicense); // Set VHF license
+                setCaptainLicense(userCaptainLicense); // Set captain license
+                setVHFLicense(userVHFLicense); // Set VHF license
+
+                setLoading(false);
+            }catch(error){
+                console.log(error);
+                Alert.alert('Chyba', 'Nepodarilo sa načítať preukazy');
+            }
         }
-        
-        setLoading(false);
     }
 
     // Set captain license
