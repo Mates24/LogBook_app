@@ -10,6 +10,7 @@ import Profile from "./profile";
 import Licenses from "./licenses";
 import Cruise from "./cruise";
 import DayCruise from "./dayCruise";
+import HourRecord from "./hourRecord";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,7 @@ export default function RootLayout() {
             <Stack.Screen name="Licenses" component={Licenses} options={{headerShown: false}}/>
             <Stack.Screen name="Cruise" component={Cruise} options={{headerShown: false}}/>
             <Stack.Screen name="DayCruise" component={DayCruise} options={{headerShown: false}}/>
+            <Stack.Screen name="HourRecord" component={HourRecord} options={{headerShown: false}}/>
 
           </>
         ) : (
