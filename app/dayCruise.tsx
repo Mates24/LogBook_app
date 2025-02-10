@@ -135,7 +135,7 @@ const DayCruise = ({ route, navigation }: any) => {
                                 hourRecords.map((hourRecord : any) => (
                                     <TouchableOpacity key={hourRecord.hour} style={{flexDirection:'row', alignItems: 'center', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)'}} onPress={() => navigation.navigate('HourRecord', { ...route.params, hourRecord })}>
                                         <View>
-                                            <Text style={{fontSize: 16, fontWeight: 500, letterSpacing: 1}}>{hourRecord.hour.slice(0,5)}</Text>
+                                            <Text style={{fontSize: 16, fontWeight: 500, letterSpacing: 1}}>{hourRecord.hour}</Text>
                                         </View>
                                         <Ionicons 
                                           name='chevron-forward-outline'
