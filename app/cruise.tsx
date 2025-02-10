@@ -9,7 +9,7 @@ const Cruise = ({ route, navigation }: any) => {
     const { cruise } = route.params;
 
     const [loading, setLoading] = useState(true);
-    const [reaload, setReload] = useState(false);
+    const [reload, setReload] = useState(false);
 
     // Get cruise image
     const [url, setUrl] = useState<string>('');
@@ -142,7 +142,7 @@ const Cruise = ({ route, navigation }: any) => {
                 await pb.collection('day_cruise').create(dayData);
                 handleCloseModal();
                 Alert.alert('Info', 'Nový deň bol pridaný');                
-                setReload(!reaload);
+                setReload(!reload);
                 resetInputs();
             }catch(err){
                 Alert.alert('Chyba', 'Nepodarilo sa pridať nový deň');
@@ -154,7 +154,7 @@ const Cruise = ({ route, navigation }: any) => {
     useEffect(() => {
         getDayCruises();
         getCruiseImg();
-    }, [reaload]);
+    }, [reload]);
 
     return (
         <SafeAreaView style={{flex: 1}}>
