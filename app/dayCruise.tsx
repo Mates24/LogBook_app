@@ -1,15 +1,66 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { SafeAreaView, View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Button, Modal, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Pocketbase from 'pocketbase';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 const DayCruise = ({ route, navigation }: any) => {
     const { cruise, dayCruise } = route.params;
 
+    const textInputRef = useRef<TextInput>(null);
+
     const [loading, setLoading] = useState(true);
     const [reload, setReload] = useState(false);
+    const [editable, setEditable] = useState(false)
+
+    const [fromPort, setFromPort] = useState('');
+    const [toPort, setToPort] = useState('');
+
+    const [sails, setSails] = useState('0');
+    const [engine, setEngine] = useState('0');
+    const [total, setTotal] = useState('0');
+
+    const enableEditing = () => {
+        setEditable(true);
+
+        setTimeout(() => {
+            textInputRef.current?.focus();
+        }, 0);
+    };
+
+    const save = async() => {
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
+        const user = await AsyncStorage.getItem('user');
+        if(user){
+            const userData = JSON.parse(user);
+            const userEmail = userData.email;
+            const userPassword = userData.password;
+            await pb.collection('users').authWithPassword(userEmail, userPassword);
+
+            try{
+                await pb.collection('day_cruise').update(dayCruise.id, {
+                    from_port: fromPort,
+                    to_port: toPort,
+                    sails: Number(sails),
+                    engine: Number(engine),
+                    total: Number(sails) + Number(engine),
+                });
+
+                Alert.alert('Info', 'Zmeny boli uložené!');
+
+                setEditable(false);
+                await getHourRecords();
+            }catch(err){
+                console.log(err);
+                Alert.alert('Chyba', 'Nepodarilo sa uložiť zmeny!');
+            };
+        };
+    };
+
+    const cancel = () => {
+        setEditable(false);
+        getHourRecords();
+    };
 
     // Get hour records
     var [hourRecords, setHourRecords] = useState<any[]>([]);
@@ -28,6 +79,11 @@ const DayCruise = ({ route, navigation }: any) => {
 
                 if(record){
                     setHourRecords(record.hour_record);
+                    setToPort(record.to_port);
+                    setFromPort(record.from_port);
+                    setSails(String(record.sails));
+                    setEngine(String(record.engine));
+                    setTotal(String(record.total));
                     setLoading(false);
                 };
                 
@@ -99,7 +155,7 @@ const DayCruise = ({ route, navigation }: any) => {
 
     useEffect(() => {
         getHourRecords();
-    }, [reload]);
+    }, [reload, editable]);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -110,23 +166,83 @@ const DayCruise = ({ route, navigation }: any) => {
             ) : (
                 <View style={{ flex: 1 }}>
                     <View style={{ flex: 1 }}>
-                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', gap: 2, paddingInline: 10, marginBottom: 5}} onPress={() => navigation.navigate('Cruise', { cruise })}>
-                            <Ionicons name='arrow-back' size={18} color='#084575' />
-                            <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Späť</Text>
-                        </TouchableOpacity>
-                        <View style={{flexDirection: 'row', paddingRight: 10, paddingBottom: 15, paddingTop: 5, alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)'}}>
-                            <View style={{paddingInline: 10}}>
-                                <Text style={{width: '100%', fontSize: 26, fontWeight: 700, textTransform: 'uppercase'}}>{dayCruise.day}</Text>
-                                <Text style={{fontWeight: 500, color: '#808080'}}>{dayCruise.date}</Text>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingInlineEnd: 10}}>
+                            <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', gap: 2, paddingInline: 10, marginBottom: 5}} onPress={() => navigation.navigate('Cruise', { cruise })}>
+                                <Ionicons name='arrow-back' size={18} color='#084575' />
+                                <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Späť</Text>
+                            </TouchableOpacity>
+                            <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5}}>
+                                { !editable ? (
+                                    <TouchableOpacity onPress={enableEditing}>
+                                        <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Upraviť</Text>
+                                    </TouchableOpacity>
+                                ) : (
+                                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                                        <TouchableOpacity onPress={cancel}>
+                                            <Text style={{fontSize: 16, fontWeight: 500, color: '#F62F2F'}}>Zrušiť</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={save}>
+                                            <Text style={{fontSize: 16, fontWeight: 500, color: '#084575'}}>Uložiť</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
                             </View>
-                            <View>
+                        </View>
+                        <View style={{paddingRight: 10, paddingBottom: 15, paddingTop: 5, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)'}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <View style={{paddingInline: 10}}>
+                                    <Text style={{width: '100%', fontSize: 26, fontWeight: 700, textTransform: 'uppercase'}}>{dayCruise.day}</Text>
+                                    <Text style={{fontWeight: 500, color: '#808080'}}>{dayCruise.date}</Text>
+                                </View>
+                                <View>
+                                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                                        <Text style={{fontSize: 16, fontWeight: 500}}>Z prístavu:</Text>
+                                        <TextInput
+                                          ref={textInputRef}
+                                          value={fromPort}
+                                          onChangeText={setFromPort}
+                                          editable={editable}
+                                          style={{fontSize: 16}}
+                                        />
+                                    </View>
+                                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                                        <Text style={{fontSize: 16, fontWeight: 500}}>Do prístavu:</Text>
+                                        <TextInput
+                                          ref={textInputRef}
+                                          value={toPort}
+                                          onChangeText={setToPort}
+                                          editable={editable}
+                                          style={{fontSize: 16}}
+                                        />
+                                    </View>
+                                </View>
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', gap: 15, paddingInline: 10, marginTop: 2}}>
                                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-                                    <Text style={{fontSize: 16, fontWeight: 500}}>Z prístavu:</Text>
-                                    <Text style={{fontSize: 16}}>{dayCruise.from_port}</Text>
+                                    <Text style={{fontSize: 16, fontWeight: 500}}>Plachty:</Text>
+                                    <TextInput
+                                      ref={textInputRef}
+                                      value={sails}
+                                      onChangeText={setSails}
+                                      editable={editable}
+                                      style={{fontSize: 16}}
+                                    />
+                                    <Text style={{fontSize: 16}}>mi</Text>
                                 </View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-                                    <Text style={{fontSize: 16, fontWeight: 500}}>Do prístavu:</Text>
-                                    <Text style={{fontSize: 16}}>{dayCruise.to_port}</Text>
+                                    <Text style={{fontSize: 16, fontWeight: 500}}>Motor:</Text>
+                                    <TextInput
+                                      ref={textInputRef}
+                                      value={engine}
+                                      onChangeText={setEngine}
+                                      editable={editable}
+                                      style={{fontSize: 16}}
+                                    />
+                                    <Text style={{fontSize: 16}}>mi</Text>
+                                </View>
+                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                                    <Text style={{fontSize: 16, fontWeight: 500}}>Celkom:</Text>
+                                    <Text style={{fontSize: 16}}>{total} mi</Text>
                                 </View>
                             </View>
                         </View>
