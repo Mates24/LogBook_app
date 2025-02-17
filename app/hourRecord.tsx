@@ -138,6 +138,10 @@ const HourRecord = ({ route, navigation }: any) => {
         };
     };
 
+    const cancel = () => {
+        getData();
+    };
+
     useEffect(() => {
         const hasChanges = JSON.stringify(initialData) !== JSON.stringify({
             lat, long, compassCourse, bottomCourse, deviation, speed, sails, engine, wind, cloudiness, visibility, temperature, notes
@@ -288,7 +292,7 @@ const HourRecord = ({ route, navigation }: any) => {
                     </View>
                     { showButtons && (
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, left: 0, marginBottom: 10, gap: 10}}>
-                            <TouchableOpacity /*onPress={cancelCruise}*/>
+                            <TouchableOpacity onPress={cancel}>
                                 <Text style={{fontSize: 16, fontWeight: 500, color: '#F62F2F'}}>Zrušiť</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={updateRecord}>
