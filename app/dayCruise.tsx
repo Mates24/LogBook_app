@@ -218,7 +218,7 @@ const DayCruise = ({ route, navigation }: any) => {
                                 </View>
                             </View>
                             <View style={{flexDirection: 'row', alignItems: 'center', gap: 15, paddingInline: 10, marginTop: 10}}>
-                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
                                     <Text style={{fontSize: 16, fontWeight: 500}}>Plachty:</Text>
                                     <TextInput
                                       ref={textInputRef}
@@ -227,9 +227,9 @@ const DayCruise = ({ route, navigation }: any) => {
                                       editable={editable}
                                       style={{fontSize: 16}}
                                     />
-                                    <Text style={{fontSize: 16}}>mi</Text>
+                                    <Text style={{fontSize: 16}}>Nm</Text>
                                 </View>
-                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
                                     <Text style={{fontSize: 16, fontWeight: 500}}>Motor:</Text>
                                     <TextInput
                                       ref={textInputRef}
@@ -238,11 +238,11 @@ const DayCruise = ({ route, navigation }: any) => {
                                       editable={editable}
                                       style={{fontSize: 16}}
                                     />
-                                    <Text style={{fontSize: 16}}>mi</Text>
+                                    <Text style={{fontSize: 16}}>Nm</Text>
                                 </View>
-                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
                                     <Text style={{fontSize: 16, fontWeight: 500}}>Celkom:</Text>
-                                    <Text style={{fontSize: 16}}>{total} mi</Text>
+                                    <Text style={{fontSize: 16}}>{total} Nm</Text>
                                 </View>
                             </View>
                         </View>
