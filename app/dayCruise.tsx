@@ -217,7 +217,7 @@ const DayCruise = ({ route, navigation }: any) => {
                                     </View>
                                 </View>
                             </View>
-                            <View style={{flexDirection: 'row', alignItems: 'center', gap: 15, paddingInline: 10, marginTop: 2}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', gap: 15, paddingInline: 10, marginTop: 10}}>
                                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
                                     <Text style={{fontSize: 16, fontWeight: 500}}>Plachty:</Text>
                                     <TextInput
