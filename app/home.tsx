@@ -252,7 +252,7 @@ const Home = ({ navigation }: Props) => {
                         </TouchableOpacity>
                     </View>
                     <View style={{alignItems: 'center'}}>
-                        <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase', marginBottom: 10}}>Sailed miles this week</Text>
+                        <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase', marginBottom: 10}}>Naplávané míle za posledný týždeň</Text>
                         <View style={{borderRadius: 16, justifyContent: 'center', alignItems: 'center', paddingInline: 25, paddingBlock: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 1, overflowX: 'hidden', backgroundColor: '#FFF'}}>
                             <BarChart
                                style={{marginLeft: -65}}
@@ -271,7 +271,7 @@ const Home = ({ navigation }: Props) => {
                     </View>
                     <View style={{flex: 1, marginTop: 20, paddingHorizontal: 10}}>
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5}}>
-                            <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase'}}>Cruises</Text>
+                            <Text style={{fontSize: 18, fontWeight: 600, textTransform: 'uppercase'}}>Plavby</Text>
                             <TouchableOpacity onPress={() => navigation.navigate('AddCruise')}>
                                 <Text style={{fontSize: 16, fontWeight: 600, textTransform: 'uppercase', color: '#808080'}}>Pridať plabu</Text>
                             </TouchableOpacity>
@@ -299,14 +299,14 @@ const Home = ({ navigation }: Props) => {
                                                         <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Motor</Text>
                                                         <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.engine || 0), 0) : '0'} mi</Text>
                                                     </View>
-                                                    <View>
+                                                    {/* <View>
                                                         <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Čas</Text>
                                                         <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? new Date(
                                                             cruise.day_cruise.reduce((totalSeconds, curr) => {
                                                                 const [h, m, s] = (curr.time || '00:00:00').split(':').map(Number);
                                                                 return totalSeconds + h * 3600 + m * 60 + s;
                                                             }, 0) * 1000).toISOString().substring(11, 19) : '00:00:00'}</Text>
-                                                    </View>
+                                                    </View> */}
                                                 </View>
                                             </View>
                                         </View>
