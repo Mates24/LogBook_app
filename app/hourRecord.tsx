@@ -186,95 +186,131 @@ const HourRecord = ({ route, navigation }: any) => {
                     <View style={{paddingHorizontal: 10, paddingBottom: 15}}>
                         <Text style={styles.labels}>Navigácia</Text>
                         <View style={styles.inputs}>
-                            <TextInput 
-                              placeholder='Zemepisná šírka' 
-                              placeholderTextColor={'#808080'} 
-                              value={lat}
-                              onChangeText={setLat}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Zemepisná dĺžka' 
-                              placeholderTextColor={'#808080'} 
-                              value={long}
-                              onChangeText={setLong}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Kurz kompasový' 
-                              placeholderTextColor={'#808080'} 
-                              value={compassCourse}
-                              onChangeText={setCompassCourse}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Kurz dnový' 
-                              placeholderTextColor={'#808080'} 
-                              value={bottomCourse}
-                              onChangeText={setBottomCourse}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Deviace' 
-                              placeholderTextColor={'#808080'} 
-                              value={deviation}
-                              onChangeText={setDeviation}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Rýchlosť' 
-                              placeholderTextColor={'#808080'} 
-                              value={speed}
-                              onChangeText={setSpeed}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Plachty' 
-                              placeholderTextColor={'#808080'} 
-                              value={sails}
-                              onChangeText={setSails}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Motor' 
-                              placeholderTextColor={'#808080'} 
-                              value={engine}
-                              onChangeText={setEngine}
-                              style={styles.input}
-                            />
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Lat:</Text>
+                                <TextInput 
+                                  placeholder='Zemepisná šírka' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={lat}
+                                  onChangeText={setLat}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Long:</Text>
+                                <TextInput 
+                                  placeholder='Zemepisná dĺžka' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={long}
+                                  onChangeText={setLong}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>KK:</Text>
+                                <TextInput 
+                                  placeholder='Kurz kompasový' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={compassCourse}
+                                  onChangeText={setCompassCourse}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>KD:</Text>
+                                <TextInput 
+                                  placeholder='Kurz dnový' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={bottomCourse}
+                                  onChangeText={setBottomCourse}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Deviace:</Text>
+                                <TextInput 
+                                  placeholder='Deviace' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={deviation}
+                                  onChangeText={setDeviation}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Rýchlosť:</Text>
+                                <TextInput 
+                                  placeholder='Rýchlosť' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={speed}
+                                  onChangeText={setSpeed}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Plachty:</Text>
+                                <TextInput 
+                                  placeholder='Plachty' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={sails}
+                                  onChangeText={setSails}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Motor:</Text>
+                                <TextInput 
+                                  placeholder='Motor' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={engine}
+                                  onChangeText={setEngine}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
                         </View>
                     </View>
                     <View style={{paddingHorizontal: 10, paddingBottom: 15}}>
                         <Text style={styles.labels}>Počasie</Text>
                         <View style={styles.inputs}>
-                            <TextInput 
-                              placeholder='Vietor' 
-                              placeholderTextColor={'#808080'} 
-                              value={wind}
-                              onChangeText={setWind}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Oblačnosť' 
-                              placeholderTextColor={'#808080'} 
-                              value={cloudiness}
-                              onChangeText={setCloudiness}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Viditeľnosť' 
-                              placeholderTextColor={'#808080'} 
-                              value={visibility}
-                              onChangeText={setVisibility}
-                              style={styles.input}
-                            />
-                            <TextInput 
-                              placeholder='Teplota' 
-                              placeholderTextColor={'#808080'} 
-                              value={temperature}
-                              onChangeText={setTemperature}
-                              style={styles.input}
-                            />
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Vietor:</Text>
+                                <TextInput 
+                                  placeholder='Vietor' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={wind}
+                                  onChangeText={setWind}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Oblačnosť:</Text>
+                                <TextInput 
+                                  placeholder='Oblačnosť' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={cloudiness}
+                                  onChangeText={setCloudiness}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Viditeľnosť:</Text>
+                                <TextInput 
+                                  placeholder='Viditeľnosť' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={visibility}
+                                  onChangeText={setVisibility}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
+                            <View style={styles.input}>
+                                <Text style={{fontSize: 16, fontWeight: 500}}>Teplota:</Text>
+                                <TextInput 
+                                  placeholder='Teplota' 
+                                  placeholderTextColor={'#808080'} 
+                                  value={temperature}
+                                  onChangeText={setTemperature}
+                                  style={{fontSize: 16}}
+                                />
+                            </View>
                         </View>
                     </View>
                     <View style={{paddingHorizontal: 10}}>
@@ -323,10 +359,10 @@ const styles = StyleSheet.create({
     },
 
     input: {
+        flexDirection: 'row',
+        gap: 5,
         width: '45%',
         marginBottom: 15,
-        fontSize: 16,
-        color: '#000',
         borderBottomWidth: 1,
         borderColor: '#808080',
     },
