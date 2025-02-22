@@ -175,7 +175,7 @@ const Cruise = ({ route, navigation }: any) => {
                                 <Text style={{fontWeight: 500, color: '#808080'}}>{cruise.date}</Text>
                             </View>
                             <Image 
-                                source={url ? { uri: url } : require('../assets/images/imgage.png')}
+                                source={url ? { uri: url } : require('../assets/images/image.png')}
                                 style={{width: 55, aspectRatio: 1, borderRadius: 5}}    
                             />
                         </View>
