@@ -111,7 +111,6 @@ const HourRecord = ({ route, navigation }: any) => {
                 console.log(err);
             }
         }
-
         setLoading(false);
     };
 
