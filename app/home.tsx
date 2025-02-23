@@ -16,12 +16,9 @@ interface Cruise {
     id: string;
     country: string;
     date: string;
-    day_cruise: {
-        sails: number;
-        engine: number;
-        total: number;
-        time: string;
-    } | null;
+    sails: number;
+    engine: number;
+    total: number;
     image: any;
 };
 
@@ -46,7 +43,7 @@ const Home = ({ navigation }: Props) => {
             const userAvatar = pb.files.getUrl(userData.record, userData.record.avatar);
             setUrl(userAvatar);
         }
-    }
+    };
 
     // Weather API
     const fetchWeather = async (lat: number, lon: number) => {
@@ -98,58 +95,140 @@ const Home = ({ navigation }: Props) => {
         setLoading(true);
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
-
-        if(!user){
+    
+        if (!user) {
             console.log('User not found');
+            setLoading(false);
             return;
-        }else{
-            try{
-                const userData = JSON.parse(user);
-                const userEmail = userData.email;
-                const userPassword = userData.password;
+        }
+    
+        try {
+            const userData = JSON.parse(user);
+            const userEmail = userData.email;
+            const userPassword = userData.password;
+    
+            await pb.collection('users').authWithPassword(userEmail, userPassword);
+    
+            const userRecord = await pb.collection('users').getOne(userData.record.id);
+    
+            if (userRecord) {
+                const cruises = await pb.collection('cruises').getFullList({
+                    filter: `user = '${userData.record.id}'`,
+                    sort: '-from',
+                });
+    
+                const formattedCruises = [];
+
+                for (const cruise of cruises) {
+                  let sailsTotal = 0;
+                  let engineTotal = 0;
+                  let overallTotal = 0;
                 
-                await pb.collection('users').authWithPassword(userEmail, userPassword);
-
-                const record = await pb.collection('users').getOne(userData.record.id);
-
-                if (record) {
-                    const records = await pb.collection('cruises').getFullList({
-                        filter: `user = '${userData.record.id}'`,
-                        expand: 'day_cruise',
-                        sort: '-from',
+                  try {
+                    const dailyRecords = await pb.collection('day_cruise').getFullList({
+                      filter: `cruise = '${cruise.id}'`,
                     });
-
-                    const formattedCruises = records.map(record => ({
-                        id: record.id,
-                        country: record.country,
-                        date: record.from.split(' ')[0].split('-').reverse().join('.') + ' - ' + record.to.split(' ')[0].split('-').reverse().join('.'),
-                        day_cruise: record.day_cruise ? record.day_cruise : null,
-                        sails: record.day_cruise ? record.day_cruise.sails || 0 : 0,
-                        engine: record.day_cruise ? record.day_cruise.engine || 0 : 0,
-                        total: record.day_cruise ? record.day_cruise.total || 0 : 0,
-                        time: record.day_cruise ? record.day_cruise.time || 0 : 0,
-                        image: record.image ? { uri: pb.files.getUrl(record, record.image) } : require('../assets/images/imgage.png'),
-                    }));
-
-                    setCruises(formattedCruises);
-                } else {
-                    console.log('No cruises found for the user');
+                
+                    dailyRecords.forEach((dailyRecord) => {
+                      sailsTotal += dailyRecord.sails;
+                      engineTotal += dailyRecord.engine;
+                      overallTotal += dailyRecord.sails + dailyRecord.engine;
+                    });
+                  } catch (err) {
+                    console.error(`Error fetching daily records for cruise ${cruise.id}:`, err);
+                  }
+              
+                  const formatDate = (date: any) => {
+                    if (!date) return 'Neznámy dátum';
+                    return date.split(' ')[0].split('-').reverse().join('.');
+                  };
+              
+                  formattedCruises.push({
+                    id: cruise.id,
+                    country: cruise.country,
+                    date: `${formatDate(cruise.from)} - ${formatDate(cruise.to)}`,
+                    sails: sailsTotal,
+                    engine: engineTotal,
+                    total: overallTotal,
+                    image: cruise.image
+                      ? { uri: pb.files.getUrl(cruise, cruise.image) }
+                      : require('../assets/images/image.png'),
+                  });
                 }
-            }catch(err){
-                console.log(err);
-            }finally{
-                setLoading(false);
+                setCruises(formattedCruises);
+            } else {
+                console.log('No user record found');
             }
-        };
-    };
+        } catch (err) {
+            console.log('Error fetching cruises:', err);
+        } finally {
+            setLoading(false);
+        }
+    };    
 
     // Chart
     const currentDayIndex = new Date().getDay();
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const getShiftedDays = () => {
-      return [...daysOfWeek.slice(currentDayIndex), ...daysOfWeek.slice(0, currentDayIndex)];
+
+    // Získaj dátumy za posledných 7 dní
+    const getLast7DaysDates = () => {
+      const dates = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        dates.push(date.toISOString().split('T')[0]);
+      }
+      return dates;
     };
-    
+
+    // Funkcia na dynamické načítanie dát
+    const loadChartData = async () => {
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
+        const user = await AsyncStorage.getItem('user');
+      
+        if (!user) {
+          console.log('User not found');
+          return;
+        }
+      
+        const userData = JSON.parse(user);
+        await pb.collection('users').authWithPassword(userData.email, userData.password);
+      
+        // Získame cruises používateľa
+        const cruises = await pb.collection('cruises').getFullList({
+          filter: `user = '${userData.record.id}'`,
+        });
+      
+        const cruiseIds = cruises.map(cruise => cruise.id);
+        const last7Days = getLast7DaysDates();
+        const dataPerDay = [];
+      
+        for (const day of last7Days) {
+          let totalMiles = 0;
+      
+          for (const cruiseId of cruiseIds) {
+            const records = await pb.collection('day_cruise').getFullList({
+              filter: `cruise = '${cruiseId}' && date >= '${day} 00:00:00' && date <= '${day} 23:59:59'`,
+            });
+      
+            records.forEach(rec => {
+              totalMiles += rec.total;
+            });
+          }
+          dataPerDay.push(totalMiles);
+        }
+      
+        setChartData({
+          labels: daysOfWeek.slice(currentDayIndex).concat(daysOfWeek.slice(0, currentDayIndex)),
+          datasets: [{ data: dataPerDay }]
+        });
+    };
+
+    const [chartData, setChartData] = useState({
+      labels: daysOfWeek,
+      datasets: [{ data: [0, 0, 0, 0, 0, 0, 0] }]
+    });
+
     const screenWidth = Dimensions.get('window').width;
     const chartConfig = {
         backgroundGradientFrom: "#FFF",
@@ -173,17 +252,9 @@ const Home = ({ navigation }: Props) => {
             fontWeight: '600',
         }
     };
-    const chartData = {
-        labels: getShiftedDays(),
-        datasets: [
-          {
-            data: [20, 45, 28, 80, 120, 43, 14]
-          }
-        ]
-    };
 
     useEffect(() => {
-        // Get location for weather data
+        // Získanie polohy pre zobrazenie počasia
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
@@ -196,6 +267,7 @@ const Home = ({ navigation }: Props) => {
             fetchWeather(location.coords.latitude, location.coords.longitude);
         })();
 
+        loadChartData();
         getUserAvatar();
         getCruise();
     }, []);
@@ -293,26 +365,22 @@ const Home = ({ navigation }: Props) => {
                                                 <View style={{flexDirection: 'row', gap: 15, alignItems: 'flex-end'}}>
                                                     <View>
                                                         <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Plachty</Text>
-                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.sails || 0), 0) : '0'} mi</Text>
+                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.sails ? cruise.sails : '0'} mi</Text>
                                                     </View>
                                                     <View>
                                                         <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Motor</Text>
-                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? cruise.day_cruise.reduce((acc, curr) => acc + (curr.engine || 0), 0) : '0'} mi</Text>
+                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.engine ? cruise.engine : '0'} mi</Text>
                                                     </View>
-                                                    {/* <View>
-                                                        <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Čas</Text>
-                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.day_cruise && Array.isArray(cruise.day_cruise) ? new Date(
-                                                            cruise.day_cruise.reduce((totalSeconds, curr) => {
-                                                                const [h, m, s] = (curr.time || '00:00:00').split(':').map(Number);
-                                                                return totalSeconds + h * 3600 + m * 60 + s;
-                                                            }, 0) * 1000).toISOString().substring(11, 19) : '00:00:00'}</Text>
-                                                    </View> */}
+                                                    <View>
+                                                        <Text style={{fontSize: 14, fontWeight: 600, textAlign: 'center'}}>Celkom</Text>
+                                                        <Text style={{fontSize: 13, textAlign: 'center'}}>{cruise.total ? cruise.total : '0'} mi</Text>
+                                                    </View>
                                                 </View>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
                                 )) : (
-                                    <Text style={{fontSize: 16, fontWeight: 600, textAlign: 'center'}}>No cruises found</Text>
+                                    <Text style={{fontSize: 16, fontWeight: 600, textAlign: 'center'}}>Nenašli sa žiadne plavby</Text>
                                 )
                             }    
                         </ScrollView>
