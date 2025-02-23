@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Pocketbase from 'pocketbase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 
 const Cruise = ({ route, navigation }: any) => {
     const { cruise } = route.params;
@@ -96,6 +97,55 @@ const Cruise = ({ route, navigation }: any) => {
         resetInputs();
     }
 
+    const handleImgPick = async () => {
+        let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
+
+        if (status !== 'granted') {
+            Alert.alert('Chyba', 'Nemáte povolenie na prístup k galérii');
+            return;
+        }
+        
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: 'images',
+            quality: 1,
+        });
+        
+        if (!result.canceled) {
+            setLoading(true);
+            const uri = result.assets[0].uri;
+
+            try{
+                const user = await AsyncStorage.getItem('user');
+
+                const formData = new FormData();
+                formData.append('image', {
+                    uri: uri,
+                    name: 'image',
+                    type: 'image/jpeg'
+                } as any);
+
+                setUrl(uri);
+
+                if(user){
+                    const userData = JSON.parse(user);
+                    const userEmail = userData.email;
+                    const userPassword = userData.password;
+
+                    await pb.collection('users').authWithPassword(userEmail, userPassword);
+
+                    await pb.collection('cruises').update(cruise.id, formData);
+
+                    Alert.alert('Úspešne', 'Fotka plavby bola úspešne nahratá!');
+                }
+                setLoading(false);
+            }catch(error) {
+                console.log(error);
+                Alert.alert('Chyba', 'Nepodarilo sa nahrať profilový fotku!');
+            }
+        }
+    }
+
     // Date picker
     const [mode, setMode] = useState<'date' | 'time'>('date');
     const handleDateChange = ({ type }: any, selectedDate: Date | undefined) => {
@@ -178,6 +228,9 @@ const Cruise = ({ route, navigation }: any) => {
                                 source={url ? { uri: url } : require('../assets/images/image.png')}
                                 style={{width: 55, aspectRatio: 1, borderRadius: 5}}    
                             />
+                            <TouchableOpacity style={{position: 'absolute', top: -10, right: 45, padding: 5, backgroundColor: '#E7D5A7', borderRadius: 25}} onPress={handleImgPick}>
+                                <Ionicons name='camera-outline' size={20} color='black'/>
+                            </TouchableOpacity>
                         </View>
                         <ScrollView>
                             {dayCruises.length > 0 ?
