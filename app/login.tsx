@@ -42,7 +42,7 @@ const Login = ({ navigation, onSignIn }: Props) => {
     };
   };
 
-  const passwordReset = async () => {
+  /* const passwordReset = async () => {
     const pb = new Pocketbase('https://mathiasdb.em1t.me/');
     try{
       await pb.collection('users').requestPasswordReset(email);
@@ -50,7 +50,7 @@ const Login = ({ navigation, onSignIn }: Props) => {
     } catch(err){
       console.log(err);
     };
-  };
+  }; */
 
   return (
     <SafeAreaView style={{flex: 1, justifyContent: "center", alignItems: "center", gap: 15, backgroundColor: '#F3EFD5'}}>
@@ -69,18 +69,18 @@ const Login = ({ navigation, onSignIn }: Props) => {
           />
         </View>
         <View style={{width: '80%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{alignSelf: 'flex-start', paddingLeft: 10, marginBottom: 10}}>Password:</Text>
+          <Text style={{alignSelf: 'flex-start', paddingLeft: 10, marginBottom: 10}}>Heslo:</Text>
           <TextInput
-              placeholder="Password"
+              placeholder="Heslo"
               placeholderTextColor={'#808080'}
               secureTextEntry={true}
               value={password}
               onChangeText={setPassword}
               style={{paddingLeft: 10, width: '100%', height: 40, color: '#000', borderWidth: 1, borderRadius: 10, borderColor: '#808080', backgroundColor: '#fff'}}
           />
-          <TouchableOpacity onPress={passwordReset} style={{alignSelf: 'flex-end', paddingRight: 5, paddingTop: 5, }}>
+          {/* <TouchableOpacity onPress={passwordReset} style={{alignSelf: 'flex-end', paddingRight: 5, paddingTop: 5, }}>
             <Text style={{color: '#084575', fontSize: 13, fontWeight: 500}}>Zabudli ste heslo?</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <TouchableOpacity onPress={handleLogin}>
           <Text style={{color: '#084575', fontSize: 19, fontWeight: 600}}>Prihlásiť sa</Text>
