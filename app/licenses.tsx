@@ -47,16 +47,19 @@ const License = ({ navigation }: any) => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
+        // Check if user has granted permission to access gallery
         if (status !== 'granted') {
             Alert.alert('Chyba', 'Nemáte povolenie na prístup k galérii');
             return;
         }
         
+        // Launch image picker
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: 'images',
             quality: 1,
         });
         
+        // Check if user has canceled the action
         if (!result.canceled) {
             setLoading(true);
             const uri = result.assets[0].uri;
