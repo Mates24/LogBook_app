@@ -22,20 +22,6 @@ const Profile = ({ navigation, onSignOut }: Props) => {
     const [editable, setEditable] = useState<boolean>(false);
     const textInputRef = useRef<TextInput>(null);
 
-    // Get users avatar
-    const getUserAvatar = async () => {
-        const pb = new Pocketbase('https://mathiasdb.em1t.me/');
-        const user = await AsyncStorage.getItem('user');
-        if(user){
-            const userData = JSON.parse(user);
-            const userEmail = userData.email;
-            const userPassword = userData.password;
-            await pb.collection('users').authWithPassword(userEmail, userPassword);
-            const userAvatar = pb.files.getUrl(userData.record, userData.record.avatar, {'thumb': '100x250'});
-            setAvatarUrl(userAvatar);
-        }
-    }
-
     // Fetch user data
     const fetchData = async () => {
         setLoading(true);
@@ -45,11 +31,13 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         if (user) {
             await pb.collection('users').authWithPassword(JSON.parse(user).email, JSON.parse(user).password);
             const userPb = await pb.collection('users').getOne(JSON.parse(user).record.id);
+            const userAvatar = pb.files.getUrl(userPb, userPb.avatar, {'thumb': '100x250'});
             setUserName(userPb.username);
-            setFirstName(userPb.full_name.split(' ')[0]);
-            setUserLastName(userPb.full_name.split(' ')[1]);
+            setFirstName(userPb.full_name ? userPb.full_name.split(' ')[0] : 'Meno');
+            setUserLastName(userPb.full_name ? userPb.full_name.split(' ')[1] : 'Priezvisko');
             setEmail(userPb.email);
             setLocation(userPb.address);
+            setAvatarUrl(userAvatar);
             setLoading(false);
         }
     };
@@ -87,7 +75,11 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                     'full_name': userFullName,
                     'address': location,
                 });
-                // await pb.collection('users').requestEmailChange(email);
+
+                parsedUser.record.username = userName;
+                parsedUser.record.full_name = userFullName;
+                parsedUser.record.address = location;
+                await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
 
                 Alert.alert('Zmeny boli úspešne uložené');
             } catch (error){
@@ -114,6 +106,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         Alert.alert('Boli ste úspešne odhlásený');
     };
 
+    // Handle avatar pick
     const handleAvatarPick = async () => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
@@ -124,7 +117,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         }
         
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: 'images',
             quality: 1,
         });
         
@@ -152,7 +145,14 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                     await pb.collection('users').authWithPassword(userEmail, userPassword);
 
                     await pb.collection('users').update(userData.record.id, formData);
-                    
+                    const updatedUser = {
+                        ...userData,
+                        record: {
+                            ...userData.record,
+                            avatar: formData.get('avatar')
+                        }
+                    };
+                    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
                     Alert.alert('Úspešne', 'Profilová fotka bola úspešne nahratá!');
                 }
                 setLoading(false);
@@ -164,7 +164,6 @@ const Profile = ({ navigation, onSignOut }: Props) => {
     }
 
     useEffect(() => {
-        getUserAvatar();
         fetchData();
     }, []);
 
@@ -206,10 +205,10 @@ const Profile = ({ navigation, onSignOut }: Props) => {
                                 <Ionicons name='camera-outline' size={20} color='black'/>
                             </TouchableOpacity>
                         </View>
-                        <View>
+                        <View style={{flex: 1}}>
                             <TextInput
                               ref={textInputRef}
-                              value={firstName}
+                              value={firstName.toUpperCase()}
                               onChangeText={setFirstName}
                               editable={editable}
                               style={{fontSize: 28, fontWeight: '700', marginBottom: -3}}
