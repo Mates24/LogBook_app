@@ -60,9 +60,9 @@ const SignUp = ({ navigation }: Props) => {
     >
         <Text style={{fontSize: 32, textTransform: 'uppercase', fontWeight: 700}}>Registrovať sa</Text>
         <View style={{width: '80%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10}}>
-          <Text style={{alignSelf: 'flex-start', paddingLeft: 10}}>Userame:</Text>
+          <Text style={{alignSelf: 'flex-start', paddingLeft: 10}}>Používateľské meno:</Text>
           <TextInput
-              placeholder="Username"
+              placeholder="Používateľské meno"
               placeholderTextColor={'#808080'}
               autoCapitalize="none"
               inputMode="text"
@@ -85,9 +85,9 @@ const SignUp = ({ navigation }: Props) => {
           />
         </View>
         <View style={{width: '80%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10}}>
-          <Text style={{alignSelf: 'flex-start', paddingLeft: 10}}>Password:</Text>
+          <Text style={{alignSelf: 'flex-start', paddingLeft: 10}}>Heslo:</Text>
           <TextInput
-              placeholder="Password"
+              placeholder="Heslo"
               placeholderTextColor={'#808080'}
               secureTextEntry={true}
               value={password}
@@ -96,9 +96,9 @@ const SignUp = ({ navigation }: Props) => {
           />
         </View>
         <View style={{width: '80%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10}}>
-          <Text style={{alignSelf: 'flex-start', paddingLeft: 10}}>Confirm password:</Text>
+          <Text style={{alignSelf: 'flex-start', paddingLeft: 10}}>Potvrdenie hesla:</Text>
           <TextInput
-              placeholder="Confirm password"
+              placeholder="Potvrdenie hesla"
               placeholderTextColor={'#808080'}
               secureTextEntry={true}
               value={passwordConfirm}
@@ -107,7 +107,7 @@ const SignUp = ({ navigation }: Props) => {
           />
         </View>
         <TouchableOpacity onPress={handleSignup}>
-          <Text style={{color: '#F62F2F', fontSize: 19, fontWeight: 600}}>Prihlásiť sa</Text>
+          <Text style={{color: '#F62F2F', fontSize: 19, fontWeight: 600}}>Registrovať sa</Text>
         </TouchableOpacity>
         <View style={{alignItems: 'center', position: 'absolute', bottom: 0, flexDirection: 'row', gap: 5, marginBottom: 20}}>
           <Text style={{textAlign: 'center'}}>Už máte účet?</Text>
