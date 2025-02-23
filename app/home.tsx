@@ -40,8 +40,10 @@ const Home = ({ navigation }: Props) => {
             const userEmail = userData.email;
             const userPassword = userData.password;
             await pb.collection('users').authWithPassword(userEmail, userPassword);
-            const userAvatar = pb.files.getUrl(userData.record, userData.record.avatar);
+            const userPb = await pb.collection('users').getOne(userData.record.id);
+            const userAvatar = pb.files.getUrl(userPb, userPb.avatar);
             setUrl(userAvatar);
+            setLoading(false);
         }
     };
 
