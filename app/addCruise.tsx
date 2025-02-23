@@ -73,7 +73,7 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         if(type === 'set') {
             const currentDate = selectedDate;
             setCruiseDateFrom(currentDate);
-            // setShow(false);
+            setShowDateFrom(false);
         } else {
             setShowDateFrom(false);
         };
@@ -85,16 +85,13 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const showDateFromPicker = () => {
         showModeFrom('date');
     };
-    const hideDateFromPicker = () => {
-        setShowDateFrom(false);
-    };
 
     // Date "To" picker functions
     const onChangeTo = ({ type }: any, selectedDate: any) => {
         if(type === 'set') {
             const currentDate = selectedDate;
             setCruiseDateTo(currentDate);
-            // setShow(false);
+            setShowDateTo(false);
         } else {
             setShowDateFrom(false);
         };
@@ -105,9 +102,6 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     };
     const showDateToPicker = () => {
         showModeTo('date');
-    };
-    const hideDateToPicker = () => {
-        setShowDateTo(false);
     };
 
     // Data for boat type dropdown
@@ -253,13 +247,10 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                             <DateTimePicker
                               value={cruiseDateFrom || new Date()}
                               mode={mode}
-                              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                              display='default'
                               onChange={onChangeFrom}
                               textColor='#000'
                             />
-                            <TouchableOpacity onPress={hideDateFromPicker} style={{backgroundColor: '#808080'}}>
-                                <Text style={{fontWeight: 600, textTransform: 'uppercase'}}>Potvrdiť</Text>
-                            </TouchableOpacity>
                         </View>
                         )}
                         {showDateTo && (
@@ -267,13 +258,10 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
                             <DateTimePicker
                               value={cruiseDateTo || new Date()}
                               mode={mode}
-                              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                              display='default'
                               onChange={onChangeTo}
                               textColor='#000'
                             />
-                            <TouchableOpacity onPress={hideDateToPicker} style={{backgroundColor: '#808080'}}>
-                                <Text style={{fontWeight: 600, textTransform: 'uppercase'}}>Potvrdiť</Text>
-                            </TouchableOpacity>
                         </View>
                         )}
                     </View>
