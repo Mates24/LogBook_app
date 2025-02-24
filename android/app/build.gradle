@@ -86,7 +86,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.logbook"
+    namespace 'com.matejcik24.LogBook'
     defaultConfig {
         applicationId 'com.matejcik24.LogBook'
         minSdkVersion rootProject.ext.minSdkVersion
