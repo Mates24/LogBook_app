@@ -12,7 +12,7 @@ const Cruise = ({ route, navigation }: any) => {
     const [loading, setLoading] = useState(true);
     const [reload, setReload] = useState(false);
 
-    // Get cruise image
+    // Získanie fotky plavby
     const [url, setUrl] = useState<string>('');
 
     const getCruiseImg = async () => {
@@ -29,7 +29,7 @@ const Cruise = ({ route, navigation }: any) => {
         }
     }
 
-    // Get day cruise
+    // Získanie denných záznamov
     var [dayCruises, setDayCruises] = useState<any[]>([]);
 
     const getDayCruises = async() => {
@@ -72,7 +72,7 @@ const Cruise = ({ route, navigation }: any) => {
         };
     };
 
-    // Modal for adding new day
+    // Modal pre pridanie nového dňa
     const [isModalVisible, setModalVisible] = useState(false);
     const [dayName, setDayName] = useState('');
     const [dayDate, setDayDate] = useState<Date>();
@@ -80,7 +80,7 @@ const Cruise = ({ route, navigation }: any) => {
     const [toPort, setToPort] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
 
-    // Reset inputs
+    // Reset inputov
     const resetInputs = () => {
         setDayDate(undefined);
         setDayName('');
@@ -88,7 +88,7 @@ const Cruise = ({ route, navigation }: any) => {
         setToPort('');
     };
 
-    // Open and close modal
+    // Otvorenie a zatvorenie modal okna
     const handleOpenModal = () => {
         setModalVisible(true);
     }
@@ -146,7 +146,7 @@ const Cruise = ({ route, navigation }: any) => {
         }
     }
 
-    // Date picker
+    // Zobrazenie dátumu
     const [mode, setMode] = useState<'date' | 'time'>('date');
     const handleDateChange = ({ type }: any, selectedDate: Date | undefined) => {
         if (type === 'set' && selectedDate) {
@@ -165,7 +165,7 @@ const Cruise = ({ route, navigation }: any) => {
         showModeFrom('date');
     };
 
-    // Add new day
+    // Pridanie nového dňa
     const handleAddDay = async() => {
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');

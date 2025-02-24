@@ -22,7 +22,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
     const [editable, setEditable] = useState<boolean>(false);
     const textInputRef = useRef<TextInput>(null);
 
-    // Fetch user data
+    // Zoženie dát používateľa
     const fetchData = async () => {
         setLoading(true);
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
@@ -42,7 +42,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         }
     };
 
-    // Enable editing
+    // Umožnenie úpravy
     const enableEditing = () => {
         setEditable(true);
 
@@ -51,7 +51,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         }, 0);
     };
 
-    // Save changes
+    // Uloženie zmien
     const saveChanges = async () => {
         setEditable(false); // Disable editing
 
@@ -63,13 +63,13 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         if (user){
             try{
                 const parsedUser = JSON.parse(user);
-                parsedUser.record.full_name = userFullName; // Update user full name
+                parsedUser.record.full_name = userFullName;
 
-                await AsyncStorage.setItem('user', JSON.stringify(parsedUser)); // Save user data to async storage
+                await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
 
                 await pb.collection('users').authWithPassword(parsedUser.email, parsedUser.password);
 
-                // Update user full name in database
+                // Aktualizácia mena, priezviska a adresy
                 await pb.collection('users').update(parsedUser.record.id, {
                     'username': userName,
                     'full_name': userFullName,
@@ -85,7 +85,7 @@ const Profile = ({ navigation, onSignOut }: Props) => {
             } catch (error){
                 Alert.alert('Nepodarilo sa uložiť zmeny');
 
-                // Fetch original user data
+                // Ak sa nepodarí uložiť zmeny, načítajú sa pôvodné dáta
                 const originalUser = await AsyncStorage.getItem('user');
                 if (originalUser) {
                     const parsedOriginalUser = JSON.parse(originalUser);
@@ -99,14 +99,14 @@ const Profile = ({ navigation, onSignOut }: Props) => {
         }
     };
 
-    // Log out
+    // Odhlásenie
     const handleLogOut = async () => {
         await AsyncStorage.removeItem('user');
         onSignOut();
         Alert.alert('Boli ste úspešne odhlásený');
     };
 
-    // Handle avatar pick
+    // Nahratie profilovej fotky
     const handleAvatarPick = async () => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');

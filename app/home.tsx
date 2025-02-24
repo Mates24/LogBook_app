@@ -31,7 +31,7 @@ const Home = ({ navigation }: Props) => {
     const [url, setUrl] = useState<string>('');
 
     
-    // Get users avatar
+    // Získanie avatara používateľa
     const getUserAvatar = async () => {
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
@@ -47,7 +47,7 @@ const Home = ({ navigation }: Props) => {
         }
     };
 
-    // Weather API
+    // API pre počasie
     const fetchWeather = async (lat: number, lon: number) => {
         try {
             const response = await fetch(
@@ -92,7 +92,7 @@ const Home = ({ navigation }: Props) => {
         }
     };
 
-    // Cruises
+    // Plavby
     const getCruise = async () => {
         setLoading(true);
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
@@ -168,7 +168,7 @@ const Home = ({ navigation }: Props) => {
         }
     };    
 
-    // Chart
+    // Graf
     const currentDayIndex = new Date().getDay();
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

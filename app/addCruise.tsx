@@ -14,7 +14,7 @@ interface CrewMembersObject {
 const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const [isFocus, setIsFocus] = useState(false); // Dropdown focus
 
-    // Cruise inputs
+    // Inputy pre plavbu
     const [country, setCountry] = useState<any>(null); // Country input
     const [region, setRegion] = useState<string>(''); // Region input
     const [cruiseDateFrom, setCruiseDateFrom] = useState<Date | null>(null); // Cruise from date input
@@ -23,7 +23,7 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const [showDateFrom, setShowDateFrom] = useState(false); // Cruise from date input show
     const [showDateTo, setShowDateTo] = useState(false); // Cruise to date input show
 
-    // Boat inputs
+    // Inputy pre plavidlo
     const [boatName, setBoatName] = useState<string>(''); // Boat name input
     const [boatType, setBoatType] = useState<any>(null); // Boat type input
     const [registerNumber, setRegisterNumber] = useState<string>(''); // Boat register number input
@@ -31,7 +31,7 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const [boatLength, setBoatLength] = useState<any>(null); // Boat length input
     const [boatWidth, setBoatWidth] = useState<any>(null); // Boat width input
 
-    // Skipper inputs
+    // Inputy pre skippera
     const [isEnabled, setIsEnabled] = useState(false); // Skipper switch input
     const toggleSwitch = async () => {
         setIsEnabled(previousState => !previousState);
@@ -50,13 +50,13 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
     const [skipperName, setSkipperName] = useState<string>(''); // Skipper name input
     const [skipperAddress, setSkipperAddress] = useState<string>(''); // Skipper name input
 
-    // Crew inputs
+    // Inputy pre posádku
     const [crewMembers, setCrewMembers] = useState<string[]>(['', '']); // Crew name input
     const addCrewMember = () => {
         setCrewMembers([...crewMembers, '']);
     };
     
-    // Data for country dropdown
+    // Dáta pre dropdown krajiny
     const countryData = [
         { label: 'Albánsko', value: 'Albánsko' },
         { label: 'Americké Panenské ostrovy', value: 'Americké Panenské ostrovy' },
@@ -100,7 +100,7 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         { label: 'Turecko', value: 'Turecko' },
     ];
 
-    // Date "From" picker functions
+    // Funkcie pre dátumový picker "Od"
     const onChangeFrom = ({ type }: any, selectedDate: any) => {
         if(type === 'set') {
             const currentDate = selectedDate;
@@ -118,7 +118,7 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         showModeFrom('date');
     };
 
-    // Date "To" picker functions
+    // Funkcia pre dátumový picker "Do"
     const onChangeTo = ({ type }: any, selectedDate: any) => {
         if(type === 'set') {
             const currentDate = selectedDate;
@@ -136,14 +136,14 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         showModeTo('date');
     };
 
-    // Data for boat type dropdown
+    // Dáta pre dropdown typu lode
     const boatData = [
         { label: 'Motorová loď', value: 'Motorová loď' },
         { label: 'Plachetnica', value: 'Plachetnica' },
         { label: 'Katamaran', value: 'Katamaran' },
     ];
 
-    // Add cruise
+    // Pridanie plavby
     const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
     const transformedCrewMembers = crewMembers.reduce((acc: CrewMembersObject, member, index) => {
@@ -189,7 +189,7 @@ const AddCruise = ({ navigation }: { navigation: NavigationProp<any> }) => {
         };
     };
 
-    // Cancel adding cruise
+    // Zrušenie pridávania plavby
     const cancelCruise = () => {
         setCountry(null);
         setRegion('');

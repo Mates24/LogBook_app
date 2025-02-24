@@ -62,7 +62,7 @@ const DayCruise = ({ route, navigation }: any) => {
         getHourRecords();
     };
 
-    // Get hour records
+    // Získanie záznamov
     var [hourRecords, setHourRecords] = useState<any[]>([]);
 
     const getHourRecords = async () => {
@@ -93,16 +93,16 @@ const DayCruise = ({ route, navigation }: any) => {
         };
     };
 
-    // Modal for adding new hour record
+    // Modal pre pridanie záznamu
     const [isModalVisible, setModalVisible] = useState(false);
     const [hour, setHour] = useState('');
 
-    // Reset inputs
+    // Reset inputov
     const resetInputs = () => {
         setHour('');
     };
 
-    // Open and close modal
+    // Otvorenie a zatvorenie modal okna
     const handleOpenModal = () => {
         setModalVisible(true);
     }
@@ -111,7 +111,7 @@ const DayCruise = ({ route, navigation }: any) => {
         resetInputs();
     }
 
-    // Add new hour record
+    // Pridanie záznamu
     const handleAddRecord = async() => {
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');

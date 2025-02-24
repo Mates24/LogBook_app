@@ -10,7 +10,7 @@ const License = ({ navigation }: any) => {
     const [captainLicense, setCaptainLicense] = useState<any>();
     const [vhfLicense, setVHFLicense] = useState<any>();
 
-    // Fetch licenses
+    // Zobrazenie preukazov
     const fetchLicenses = async () => {
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
@@ -42,24 +42,24 @@ const License = ({ navigation }: any) => {
         }
     }
 
-    // Set captain license
+    // Nahratie kapitánskeho preukazu
     const handleCaptainLicense = async () => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
 
-        // Check if user has granted permission to access gallery
+        // Kontrola povolenia prístupu k galérii
         if (status !== 'granted') {
             Alert.alert('Chyba', 'Nemáte povolenie na prístup k galérii');
             return;
         }
         
-        // Launch image picker
+        // Otvorenie galérie
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: 'images',
             quality: 1,
         });
         
-        // Check if user has canceled the action
+        // Kontrola či bola fotka vybraná
         if (!result.canceled) {
             setLoading(true);
             const uri = result.assets[0].uri;
@@ -95,7 +95,7 @@ const License = ({ navigation }: any) => {
         }
     };
 
-    // Set VHF license
+    // Nahratie VHF preukazu
     const handleVHFLicense = async () => {
         let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');

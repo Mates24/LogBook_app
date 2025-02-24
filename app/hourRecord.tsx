@@ -11,10 +11,10 @@ const HourRecord = ({ route, navigation }: any) => {
     const [loading, setLoading] = useState(true);
     const [updatedRecord, setUpdatedRecord] = useState<any[]>([]);
     
-    // Show info
+    // Zobrazenie informácií
     const [showInfo, setShowInfo] = useState(false);
 
-    // Pages for info
+    // Strany informácií
     const [pageOne, setPageOne] = useState(true);
     const [pageTwo, setPageTwo] = useState(false);
 
@@ -43,7 +43,7 @@ const HourRecord = ({ route, navigation }: any) => {
         setShowInfo(!showInfo);
     };
 
-    // Inputs for navigation
+    // Inputy pre navigáciu
     const [lat, setLat] = useState('');
     const [long, setLong] = useState('');
     const [compassCourse, setCompassCourse] = useState('');
@@ -53,16 +53,16 @@ const HourRecord = ({ route, navigation }: any) => {
     const [sails, setSails] = useState('');
     const [engine, setEngine] = useState('');
 
-    // Inputs for weather
+    // Inputy pre počasie
     const [wind, setWind] = useState('');
     const [cloudiness, setCloudiness] = useState('');
     const [visibility, setVisibility] = useState('');
     const [temperature, setTemperature] = useState('');
 
-    // Inputs for notes
+    // Input pre poznámky
     const [notes, setNotes] = useState('');
 
-    // Get data
+    // Získanie dát z databázy
     const getData = async () => {
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
@@ -114,11 +114,11 @@ const HourRecord = ({ route, navigation }: any) => {
         setLoading(false);
     };
 
-    // Store initial data to compare changes
+    // Uloženie pôvodných dát na porovnanie
     const [initialData, setInitialData] = useState({});
     const [showButtons, setShowButtons] = useState(false);
 
-    // Update database
+    // Aktualizácia databázy
     const updateRecord = async() => {
         const pb = new Pocketbase('https://mathiasdb.em1t.me/');
         const user = await AsyncStorage.getItem('user');
