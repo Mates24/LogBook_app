@@ -222,9 +222,9 @@ const HourRecord = ({ route, navigation }: any) => {
                                     <View style={{width: screenWidth * 0.89, marginBottom: 10}}>
                                         <Text style={{fontSize: 16, fontWeight: 500, marginBottom: 5}}>Beaufortova stupnica</Text>
                                         <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                                          <Row data={tableHead} style={styles.head} textStyle={styles.text} />
+                                          <Row data={tableHead} style={styles.head} textStyle={StyleSheet.flatten(styles.text)} />
                                           {data.map((rowData, index) => (
-                                            <Row key={index} data={rowData} style={styles.row} textStyle={styles.text} />
+                                            <Row key={index} data={rowData} style={styles.row} textStyle={StyleSheet.flatten(styles.text)} />
                                           ))}
                                         </Table>
                                   </View>
